@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Map</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="node_modules\dist\leaflet.css">
+</head>
+<body>
+    <div class="container">
+        <h1>First page</h1>
+        <p>Something here</p>
+    </div>
+
+    <div>
+        <div id="map" style="width: 100%; height:100%">
+            <iframe width="425" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=8.724517822265627%2C45.32946139602836%2C9.250488281250002%2C45.59338068769037&amp;layer=mapnik" style="border: 1px solid black"></iframe><br/><small><a href="https://www.openstreetmap.org/#map=11/45.4616/8.9875">Ver mapa ampliado</a></small>" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <script src="node_modules\leaflet\dist\leaflet.js"></script>
+
+    <script>
+        // Creating map options
+        var mapOptions = {
+            center: [45.4616, 9.0733],
+            zoom: 11
+        }
+
+        // Creating a map object
+        var mapObj = new L.map('map', mapOptions);
+
+        // Creating a layer object
+        var layer = new L.TileLayer('')
+    </script>
+
+</body>
+</html>
