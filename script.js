@@ -14,9 +14,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 
 // AQUI SANSIRO MESMO COM AS LAT E LONG TROCADAS E 5 COORDENADAs AO INVES DE 4 FUNCIONA
 $.getJSON("dados\\sansiro.geojson", function(data) {
-    // console.log(data['features']);
     data['features'].forEach(element => {
-        // console.log(element["properties"]["fill"]);
         L.geoJSON(element["geometry"], {
             color: element["properties"]["stroke"],
             fillColor: element["properties"]["fill"],
