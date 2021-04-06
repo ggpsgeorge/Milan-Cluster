@@ -4,36 +4,74 @@ import json
 import datetime
 
 def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
-    dataCSV = pd.read_csv(csvFilename).to_dict('index')
-    print(dataCSV[0], end="\n")
+    csv_dict = transform_csv_to_dict_records(csvFilename)
 
     with open(geojsonFilename, "r") as f:
         dataGEOJSON = json.load(f)
         f.close()
-    # print(dataGEOJSON['features'][0]['geometry']['coordinates'], end="\n")
-    # print(dataGEOJSON['features'][0]['properties'], end="\n")
-    for i in range(len(dataGEOJSON)): 
-        pass
-        # JUNTAR OS DADOS PARA UM GEOJSON UNICO
-        # dataCSV suas keys são indexes
+
+    geojson = {
+        "type" : "FeatureCollection",
+        "features" : []
+    }
+
+    i = 0
+    for feature in dataGEOJSON['features']:
+        default_properties = {
+            "stroke": "white",
+            "stroke-width": 1,
+            "stroke-opacity": 0.3,
+            "fill": "#009F86",
+            "fill-opacity": 1
+        }
+        key = feature['id']
+        geojson['features'].append(feature)
+        geojson['features'][i]['properties'] = default_properties
+        try:
+            if(csv_dict[key]):
+                color = get_cluster_color(csv_dict[key])
+                geojson['features'][i]['properties']['fill'] = color
+        except KeyError:
+            pass 
+        
+        i+=1
+
+    with open(destFilename, "w") as outfile:
+        json.dump(geojson, outfile)
+        outfile.close()
+
+def get_cluster_color(dict_value):
+    # #E15759 cluster 1 red
+    # #FFBE7D cluster 2 salmon
+    # #4DBBD5 cluster 3 light blue
+    # #3C5488 cluster 4 dark blue
+    # #009F86 cluster 5 green moss
+    switcher = {
+        1 : '#E15759',
+        2 : '#FFBE7D',
+        3 : '#4DBBD5',
+        4 : '#3C5488',
+        5 : '#009F86'
+    }
+    return switcher.get(dict_value['cluster'])
+
+
+
+def transform_csv_to_dict_index(csvFilename):
+    return pd.read_csv(csvFilename).to_dict('index')
+
+def transform_csv_to_dict_records(csvFilename):
+    dataCSV = pd.read_csv(csvFilename).to_dict('records')
+    csv_dict = {}
     
+    for elem in dataCSV:
+        csv_dict[elem['square_id']] = elem
 
-# split by week the csv that must be ordered
-def split_csv_by_week(csvFilename):
-    dataCSV = pd.read_csv(csvFilename).to_dict('index')
-    dict_temp = {}
-    day = 27
-    previous_day = 20
-    month = 12
-    previous_month = 12
-    for i in range(len(dataCSV)):
-        if((pd.Timestamp(2013,previous_month,previous_day) < (datetime.datetime.strptime(dataCSV[i]['activity_date'], "%Y-%m-%d")) <= (pd.Timestamp(2013,month,day)))):
-            dict_temp[i] = dataCSV[i]
     dataCSV.clear()
-    dataCSV = pd.DataFrame.from_dict(dict_temp, orient='index')
-    week = 8
-    dataCSV.to_csv("dados\\milan-sorted-week-"+str(week)+".csv", index=False)
-
+    
+    return csv_dict
+   
+    
 def write_csv(destFilename, data):
     dataCSV = pd.DataFrame.from_dict(data, orient='index')
     dataCSV.to_csv(destFilename, index=False)
@@ -55,12 +93,6 @@ def split_csv_by_day(csvFilename):
     dict_of_the_day.clear()
 
     
-# merge_csv_to_geojson("dados\\teste.geojson", "dados\\milan-sorted-week-1.csv", "dados\\cluster-week-1.geojson")
+merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-02.csv", "dados\\geojsons\\2013-11-02.geojson")
 # split_csv_by_week("dados\\milan-sorted.csv")
-split_csv_by_day("dados\\milan-sorted.csv")
-
-# #E15759 cluster 1 vermelho
-# #FFBE7D cluster 2 salmao
-# #4DBBD5 cluster 3 azul claro
-# #3C5488 cluster 4 azul escuro
-# #009F86 ckuster 5 verde musgo
+# split_csv_by_day("dados\\milan-sorted.csv")
