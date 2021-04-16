@@ -5,7 +5,9 @@ import datetime
 
 def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
     csv_dict = transform_csv_to_dict_records(csvFilename)
-
+    print(csv_dict[2045])
+    print()
+    print(csv_dict[7077])
     with open(geojsonFilename, "r") as f:
         dataGEOJSON = json.load(f)
         f.close()
@@ -19,11 +21,12 @@ def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
     for feature in dataGEOJSON['features']:
         default_properties = {
             "stroke": "white",
-            "stroke-width": 1,
-            "stroke-opacity": 0.3,
+            "stroke-width": 0,
+            "stroke-opacity": 0,
             "fill": "#009F86",
-            "fill-opacity": 1
+            "fill-opacity": 0.3,
         }
+
         key = feature['id']
         geojson['features'].append(feature)
         geojson['features'][i]['properties'] = default_properties
@@ -31,9 +34,9 @@ def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
             if(csv_dict[key]):
                 color = get_cluster_color(csv_dict[key])
                 geojson['features'][i]['properties']['fill'] = color
+                geojson['features'][i]['properties'].update({"activity": csv_dict[key]['activity']})
         except KeyError:
             pass 
-        
         i+=1
 
     with open(destFilename, "w") as outfile:
@@ -56,21 +59,39 @@ def get_cluster_color(dict_value):
     return switcher.get(dict_value['cluster'])
 
 
-
 def transform_csv_to_dict_index(csvFilename):
     return pd.read_csv(csvFilename).to_dict('index')
 
 def transform_csv_to_dict_records(csvFilename):
     dataCSV = pd.read_csv(csvFilename).to_dict('records')
-    csv_dict = {}
-    
-    for elem in dataCSV:
-        csv_dict[elem['square_id']] = elem
 
-    dataCSV.clear()
-    
+    csv_dict = {}
+    activity = []
+
+    init_key = dataCSV[0]['square_id']
+
+    for elem in dataCSV:
+        if(init_key == elem['square_id']):
+            activity.append((elem['activity_time'], elem['energy']))
+            csv_dict[init_key] = {
+                "square_id": elem['square_id'],
+                "activity_date": elem['activity_date'],
+                "cluster": elem['cluster']
+            }
+        else:
+            csv_dict[init_key]['activity'] = activity.copy()
+            activity.clear()
+            activity.append((elem['activity_time'], elem['energy']))
+            init_key = elem['square_id']
+            csv_dict[init_key] = {
+                "square_id": elem['square_id'],
+                "activity_date": elem['activity_date'],
+                "cluster": elem['cluster']
+            }
+    csv_dict[init_key]['activity'] = activity.copy()
+
     return csv_dict
-   
+     
     
 def write_csv(destFilename, data):
     dataCSV = pd.DataFrame.from_dict(data, orient='index')
@@ -93,6 +114,7 @@ def split_csv_by_day(csvFilename):
     dict_of_the_day.clear()
 
     
-merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-02.csv", "dados\\geojsons\\2013-11-02.geojson")
+# merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-03.csv", "dados\\geojsons\\2013-11-03.geojson")
 # split_csv_by_week("dados\\milan-sorted.csv")
 # split_csv_by_day("dados\\milan-sorted.csv")
+transform_csv_to_dict_records("dados\\days\\2013-11-03.csv")
