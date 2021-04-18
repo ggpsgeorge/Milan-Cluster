@@ -21,7 +21,7 @@ def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
             "stroke": "white",
             "stroke-width": 0,
             "stroke-opacity": 0,
-            "fill": "#009F86",
+            "fill": "#808080",
             "fill-opacity": 0.3,
         }
 
