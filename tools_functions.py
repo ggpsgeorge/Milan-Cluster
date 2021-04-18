@@ -5,9 +5,7 @@ import datetime
 
 def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
     csv_dict = transform_csv_to_dict_records(csvFilename)
-    print(csv_dict[2045])
-    print()
-    print(csv_dict[7077])
+
     with open(geojsonFilename, "r") as f:
         dataGEOJSON = json.load(f)
         f.close()
@@ -34,7 +32,7 @@ def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
             if(csv_dict[key]):
                 color = get_cluster_color(csv_dict[key])
                 geojson['features'][i]['properties']['fill'] = color
-                geojson['features'][i]['properties'].update({"activity": csv_dict[key]['activity']})
+                geojson['features'][i]['properties']['activity'] = csv_dict[key]['activity']
         except KeyError:
             pass 
         i+=1
@@ -114,7 +112,7 @@ def split_csv_by_day(csvFilename):
     dict_of_the_day.clear()
 
     
-# merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-03.csv", "dados\\geojsons\\2013-11-03.geojson")
+merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-03.csv", "dados\\geojsons\\2013-11-03.geojson")
 # split_csv_by_week("dados\\milan-sorted.csv")
 # split_csv_by_day("dados\\milan-sorted.csv")
-transform_csv_to_dict_records("dados\\days\\2013-11-03.csv")
+# transform_csv_to_dict_records("dados\\days\\2013-11-03.csv")
