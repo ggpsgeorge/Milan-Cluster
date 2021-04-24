@@ -3,7 +3,20 @@ body {
     margin: 0;
 }
 
-html, body, #mapid {
+html, body {
     height: 100%;
     width: 100%;
+}
+
+#mapid {
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+}
+
+.anomaly-container {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 1;
 }
