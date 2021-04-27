@@ -111,8 +111,9 @@ def split_csv_by_day(csvFilename):
     write_csv("dados\\days\\" + initial['activity_date']+".csv", dict_of_the_day)
     dict_of_the_day.clear()
 
-    
+
+split_csv_by_day("dados\\milan-sorted.csv")
+transform_csv_to_dict_records("dados\\days\\2013-11-03.csv")    
 merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-03.csv", "dados\\geojsons\\2013-11-03.geojson")
 # split_csv_by_week("dados\\milan-sorted.csv")
-# split_csv_by_day("dados\\milan-sorted.csv")
-# transform_csv_to_dict_records("dados\\days\\2013-11-03.csv")
+

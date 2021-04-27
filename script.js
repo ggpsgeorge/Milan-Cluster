@@ -18,22 +18,28 @@ $.getJSON("dados\\geojsons\\2013-11-03.geojson", function(data) {
             fillOpacity: element["properties"]["fill-opacity"],
             opacity: element["properties"]["stroke-opacity"],
             weight: element["properties"]["stroke-width"],
+            id: element["id"],
             activity: element["properties"]["activity"],
             onEachFeature: onEachFeature
         }).addTo(mymap);
     });
+    add_anomaly_container()
 })
 
-let anomaly_container = document.createElement("div");
-anomaly_container.classList.add("anomaly-container");
-let graph = document.createElement("img");
-graph.src = "jojomeme.jpg";
-anomaly_container.appendChild(graph);
-document.body.appendChild(anomaly_container);
+function add_anomaly_container(){
+    let anomaly_container = document.createElement("div");
+    anomaly_container.classList.add("anomaly-container");
+    let graph = document.createElement("img");
+    graph.src = "jojomeme.jpg";
+    anomaly_container.appendChild(graph);
+    document.body.appendChild(anomaly_container);
+}
+
 
 function onEachFeature(feature, layer){
     layer.on('click', function(){
-        console.log(layer)        
+        console.log(layer["defaultOptions"]["id"]);
+        console.log(layer["defaultOptions"]["activity"])        
     })
 }
 
