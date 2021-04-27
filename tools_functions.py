@@ -2,6 +2,8 @@ import pandas as pd
 import geojson
 import json
 import datetime
+import glob
+import os
 
 def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
     csv_dict = transform_csv_to_dict_records(csvFilename)
@@ -111,9 +113,16 @@ def split_csv_by_day(csvFilename):
     write_csv("dados\\days\\" + initial['activity_date']+".csv", dict_of_the_day)
     dict_of_the_day.clear()
 
+def merge_all_days_to_geojson(folder_path):
+        os.chdir(folder_path)
+        for filename in glob.glob("*.csv"):
+            merge_csv_to_geojson("C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\milano-grid.geojson", 
+            filename, 
+            "C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\geojsons\\" + filename[:-4] + ".geojson")
 
-split_csv_by_day("dados\\milan-sorted.csv")
-transform_csv_to_dict_records("dados\\days\\2013-11-03.csv")    
-merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-03.csv", "dados\\geojsons\\2013-11-03.geojson")
-# split_csv_by_week("dados\\milan-sorted.csv")
+merge_all_days_to_geojson("C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\days")
+# split_csv_by_day("dados\\milan-sorted.csv")
+# transform_csv_to_dict_records("dados\\days\\2013-11-03.csv")    
+# merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-03.csv", "dados\\geojsons\\2013-11-03.geojson")
+# # split_csv_by_week("dados\\milan-sorted.csv")
 
