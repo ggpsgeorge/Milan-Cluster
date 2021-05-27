@@ -24,7 +24,7 @@ def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
             "stroke-width": 0,
             "stroke-opacity": 0,
             "fill": "#808080",
-            "fill-opacity": 0.3,
+            "fill-opacity": 0.5,
         }
 
         key = feature['id']
