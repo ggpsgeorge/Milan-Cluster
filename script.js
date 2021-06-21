@@ -51,6 +51,7 @@ window.onclick = function(event) {
 
 function onEachFeature(feature, layer){
     layer.on('click', function(){
+        
         let activity = layer["defaultOptions"]["activity"];
         let activityObjs = []
         // console.log(layer["defaultOptions"]["id"]);
@@ -58,7 +59,89 @@ function onEachFeature(feature, layer){
         activity.forEach(array => {
             activityObjs.push({time: array[0], energy: array[1]});
         });
-        console.log(activityObjs);                
+
+        // console.log(activityObjs);
+        let bar_data = process_data(activityObjs)
+        console.log(bar_data);
+        render_bars(bar_data);
+
     });
 }
+
+//Bar scripts
+let svg_bar = d3.select(".bar");
+
+function render_bars(data){
+    
+    const margin = {top: 20, bottom: 20, left: 40, right: 20};
+    const innerWidth = svg_bar.attr("width") - margin.left - margin.right;
+    const innerHeight = svg_bar.attr("height") - margin.top - margin.bottom;
+    const xValue = elem => elem.moment;
+    const yValue = elem => elem.number_of_anomalies;
+    
+    const xScale = d3.scaleBand()
+        .domain(["Dawn", "Morning", "Afternoon", "Night"])
+        .range([0, innerWidth])
+        .padding(0.2);
+
+    const xAxis = d3.axisBottom(xScale);
+
+    const yScale = d3.scaleLinear()
+        .domain([0, d3.max(data, yValue) + 5])
+        .range([0, innerHeight]);
+
+    const yAxis = d3.axisLeft(yScale);
+
+    const g_cluster = svg_bar.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    g_cluster.append("g").call(xAxis)
+        .attr("transform", `translate(0, ${innerHeight})`);
+    
+    g_cluster.append("g").call(yAxis);
+
+    g_cluster.selectAll("rect").data(data)
+        .enter().append("rect")
+            .attr("x", d => xScale(xValue(d)))
+            .attr("height", d => yScale(yValue(d)))
+            .attr("width", xScale.bandwidth());  
+}
+
+function process_data(data) {
+
+    console.log(data);
+
+    let bar_data = [];
+    let init_moment = give_moment_of_time(data[0].time);
+    let anomalies_counter = 0;
+
+    data.forEach(elem => {
+        let actual_moment = give_moment_of_time(elem.time);
+        if(actual_moment == init_moment) {
+            anomalies_counter += 1;
+        }else{
+            bar_data.push({moment: init_moment, number_of_anomalies: anomalies_counter});
+            init_moment = actual_moment;
+            anomalies_counter = 1;
+        }        
+    })
+    
+    // last obj
+    bar_data.push({moment: init_moment, number_of_anomalies:anomalies_counter})
+    return bar_data;
+}
+
+function give_moment_of_time(time) {
+    if(time >= 0 && time < 6){
+        return "Dawn";
+    }else if(time >= 6 && time < 12){
+        return "Morning";
+    }else if(time >= 12 && time < 18){
+        return "Afternoon";
+    }else if(time >= 18 && time < 24){
+        return "Night";
+    }
+}
+
+
 

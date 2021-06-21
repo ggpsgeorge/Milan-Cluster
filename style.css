@@ -124,3 +124,11 @@ html, body {
     text-decoration: none;
     cursor: pointer;
 }
+
+/* graphs styles */
+.bar {
+    background-color: bisque;
+}
+rect {
+    fill: steelblue;
+}
