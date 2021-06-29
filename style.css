@@ -61,6 +61,7 @@ html, body {
     background-color: RoyalBlue;
 }
 
+/* start modal */
 .modal {
     /* tem que comecar escondido */
     display: none;
@@ -100,6 +101,7 @@ html, body {
     animation-name: animatetop;
     animation-duration: 0.4s;
 }
+/* end modal */
 
 @keyframes animatetop {
     from {top: -300px; opacity: 0}

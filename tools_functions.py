@@ -5,9 +5,11 @@ import datetime
 import glob
 import os
 
+max_number_of_anomalies = 0
+
 def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
     csv_dict = transform_csv_to_dict_records(csvFilename)
-
+    
     with open(geojsonFilename, "r") as f:
         dataGEOJSON = json.load(f)
         f.close()
@@ -89,7 +91,7 @@ def transform_csv_to_dict_records(csvFilename):
                 "cluster": elem['cluster']
             }
     csv_dict[init_key]['activity'] = activity.copy()
-
+    
     return csv_dict
      
     
@@ -120,9 +122,28 @@ def merge_all_days_to_geojson(folder_path):
             filename, 
             "C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\geojsons\\" + filename[:-4] + ".geojson")
 
-merge_all_days_to_geojson("C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\days")
+def count_the_max_number_of_anomalies_from_csv(folder_path):
+    os.chdir(folder_path)
+    for filename in glob.glob("*.csv"):
+        csv_dict = transform_csv_to_dict_records(filename)
+        for key in csv_dict:
+            set_max_number_of_anomalies(csv_dict[key]['activity'])
+        
+    print(max_number_of_anomalies)
+    
+
+def set_max_number_of_anomalies(activity_ls):
+    number_of_anomalies = len(activity_ls)
+    global max_number_of_anomalies
+
+    if(number_of_anomalies > max_number_of_anomalies):
+        max_number_of_anomalies = number_of_anomalies 
+    
+
+# merge_all_days_to_geojson("C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\days")
 # split_csv_by_day("dados\\milan-sorted.csv")
-# transform_csv_to_dict_records("dados\\days\\2013-11-03.csv")    
+# transform_csv_to_dict_records("dados\\temp.csv")
+count_the_max_number_of_anomalies_from_csv("C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\days")    
 # merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-03.csv", "dados\\geojsons\\2013-11-03.geojson")
 # # split_csv_by_week("dados\\milan-sorted.csv")
 

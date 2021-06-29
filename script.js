@@ -69,10 +69,10 @@ function onEachFeature(feature, layer){
 }
 
 //Bar scripts
-let svg_bar = d3.select(".bar");
 
 function render_bars(data){
     
+    let svg_bar = d3.select(".bar");
     const margin = {top: 20, bottom: 20, left: 40, right: 20};
     const innerWidth = svg_bar.attr("width") - margin.left - margin.right;
     const innerHeight = svg_bar.attr("height") - margin.top - margin.bottom;
@@ -82,13 +82,13 @@ function render_bars(data){
     const xScale = d3.scaleBand()
         .domain(["Dawn", "Morning", "Afternoon", "Night"])
         .range([0, innerWidth])
-        .padding(0.2);
+        .padding(0.1);
 
     const xAxis = d3.axisBottom(xScale);
 
     const yScale = d3.scaleLinear()
-        .domain([0, d3.max(data, yValue) + 5])
-        .range([0, innerHeight]);
+        .domain([0, 160]) 
+        .range([innerHeight, 0]);
 
     const yAxis = d3.axisLeft(yScale);
 
@@ -103,8 +103,9 @@ function render_bars(data){
     g_cluster.selectAll("rect").data(data)
         .enter().append("rect")
             .attr("x", d => xScale(xValue(d)))
-            .attr("height", d => yScale(yValue(d)))
-            .attr("width", xScale.bandwidth());  
+            .attr("y", d => yScale(yValue(d)))
+            .attr("height", d => innerHeight - yScale(yValue(d)))
+            .attr("width", xScale.bandwidth());
 }
 
 function process_data(data) {
