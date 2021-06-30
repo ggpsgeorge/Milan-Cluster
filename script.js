@@ -87,7 +87,7 @@ function render_bars(data){
     const xAxis = d3.axisBottom(xScale);
 
     const yScale = d3.scaleLinear()
-        .domain([0, 160]) 
+        .domain([0, 40]) 
         .range([innerHeight, 0]);
 
     const yAxis = d3.axisLeft(yScale);

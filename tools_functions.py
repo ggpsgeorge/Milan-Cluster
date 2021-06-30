@@ -5,7 +5,12 @@ import datetime
 import glob
 import os
 
-max_number_of_anomalies = 0
+max_number_of_anomalies = {
+    "Dawn": 0,
+    "Morning": 0,
+    "Afternoon": 0,
+    "Night": 0
+}
 
 def merge_csv_to_geojson(geojsonFilename, csvFilename, destFilename):
     csv_dict = transform_csv_to_dict_records(csvFilename)
@@ -131,13 +136,34 @@ def count_the_max_number_of_anomalies_from_csv(folder_path):
         
     print(max_number_of_anomalies)
     
-
 def set_max_number_of_anomalies(activity_ls):
-    number_of_anomalies = len(activity_ls)
     global max_number_of_anomalies
+    number_of_anomalies = {
+        "Dawn": 0,
+        "Morning": 0,
+        "Afternoon": 0,
+        "Night": 0
+    }
 
-    if(number_of_anomalies > max_number_of_anomalies):
-        max_number_of_anomalies = number_of_anomalies 
+    for activity in activity_ls:
+        moment = give_moment_of_time(activity[0])
+        number_of_anomalies[moment] += 1
+    
+    for key in number_of_anomalies:
+        if(max_number_of_anomalies[key] < number_of_anomalies[key]):
+            max_number_of_anomalies[key] = number_of_anomalies[key]
+    
+    number_of_anomalies.clear()
+
+def give_moment_of_time(time):
+    if(time >= 0 and time < 6):
+        return "Dawn"
+    elif(time >= 6 and time < 12):
+        return "Morning"
+    elif(time >= 12 and time < 18):
+        return "Afternoon"
+    elif(time >= 18 and time < 24):
+        return "Night"
     
 
 # merge_all_days_to_geojson("C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\days")
