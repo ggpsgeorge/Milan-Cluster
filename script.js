@@ -71,6 +71,8 @@ function onEachFeature(feature, layer){
 //Bar scripts
 
 function render_bars(data){
+
+    d3.select('.bar').selectAll('*').remove();
     
     let svg_bar = d3.select(".bar");
     const margin = {top: 20, bottom: 20, left: 40, right: 20};
@@ -82,7 +84,7 @@ function render_bars(data){
     const xScale = d3.scaleBand()
         .domain(["Dawn", "Morning", "Afternoon", "Night"])
         .range([0, innerWidth])
-        .padding(0.1);
+        .padding(0.03);
 
     const xAxis = d3.axisBottom(xScale);
 
@@ -96,6 +98,7 @@ function render_bars(data){
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
     g_cluster.append("g").call(xAxis)
+        .attr("font-size", "10px")
         .attr("transform", `translate(0, ${innerHeight})`);
     
     g_cluster.append("g").call(yAxis);
@@ -126,9 +129,9 @@ function process_data(data) {
             anomalies_counter = 1;
         }        
     })
-    
     // last obj
     bar_data.push({moment: init_moment, number_of_anomalies:anomalies_counter})
+
     return bar_data;
 }
 

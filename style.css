@@ -131,6 +131,11 @@ html, body {
 .bar {
     background-color: bisque;
 }
+
 rect {
     fill: steelblue;
+}
+
+rect:hover{
+    opacity: 0.5;
 }
