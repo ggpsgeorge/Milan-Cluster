@@ -129,13 +129,12 @@ html, body {
 
 /* graphs styles */
 .bar {
-    background-color: bisque;
+    background-color: #A6B4BA;
 }
 
 rect {
     fill: steelblue;
 }
-
 rect:hover{
-    opacity: 0.5;
+    opacity: 0.8;
 }

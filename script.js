@@ -84,7 +84,7 @@ function render_bars(data){
     const xScale = d3.scaleBand()
         .domain(["Dawn", "Morning", "Afternoon", "Night"])
         .range([0, innerWidth])
-        .padding(0.03);
+        .padding(0.07);
 
     const xAxis = d3.axisBottom(xScale);
 
@@ -103,12 +103,30 @@ function render_bars(data){
     
     g_cluster.append("g").call(yAxis);
 
+    // insert grid 
+    g_cluster.append("g")
+        .attr('class', 'grid')
+        .call(d3.axisLeft()
+            .scale(yScale)
+            .tickSize(-innerWidth, 0, 0)
+            .tickFormat(''))
+
     g_cluster.selectAll("rect").data(data)
         .enter().append("rect")
             .attr("x", d => xScale(xValue(d)))
             .attr("y", d => yScale(yValue(d)))
             .attr("height", d => innerHeight - yScale(yValue(d)))
             .attr("width", xScale.bandwidth());
+
+    // labels
+    // Y label
+    g_cluster.append('text')
+        .attr('x', -(innerHeight / 2.5) - margin.top)
+        .attr('y', -margin.left / 1.6)
+        .attr('transform', 'rotate(-90)')
+        .attr('text-anchor', 'middle')
+        .text('Number of anomalies')
+    
 }
 
 function process_data(data) {
