@@ -14,8 +14,18 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 }).addTo(mymap);
 //end loading
 
+// Datapicker init
+$("#datepicker").datepicker({
+    "format": 'yyyy-mm-dd',
+    "startDate": '2013-11-01',
+    "endDate": '2013-12-23'
+});
+
+let datepicker_input = document.getElementById("datepicker");
+console.log(datepicker_input.value);
+
 //Load geojson
-$.getJSON("dados\\geojsons\\2013-11-03.geojson", function(data) {
+$.getJSON("dados\\geojsons\\"+datepicker_input.value+".geojson", function(data) {
     data["features"].forEach(element => {
         L.geoJSON(element["geometry"], {
             color: element["properties"]["stroke"],

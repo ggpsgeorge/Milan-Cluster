@@ -2,7 +2,7 @@
   "name": "milan-cluster",
   "version": "0.0.1",
   "description": "Data visualization website of internet traffic from milan",
-  "main": "main.js",
+  "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,10 +17,10 @@
   },
   "homepage": "https://github.com/ggpsgeorge/Milan-Cluster#readme",
   "dependencies": {
-    "bootstrap": "^4.6.0",
-    "flatpickr": "^4.6.9",
+    "@popperjs/core": "^2.9.2",
+    "bootstrap": "^5.0.2",
+    "d3.js": "0.0.2-security",
     "jquery": "^3.6.0",
-    "leaflet": "^1.7.1",
-    "popper.js": "^1.16.1"
+    "leaflet": "^1.7.1"
   }
 }
