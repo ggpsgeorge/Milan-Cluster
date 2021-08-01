@@ -15,11 +15,7 @@ function loadMap(){
         accessToken: 'pk.eyJ1IjoiZ2dwc2dlb3JnZSIsImEiOiJja2xoNjRoNnk1YnRnMnJwbGhjdjdkMW9lIn0.kn_ZuIZt6PkfprwNnUPRwg'
     }).addTo(mymap);
     
-    let date = loadDatepicker()
-    console.log(date)
-    if(date == ""){date = undefined}
-    loadGeojson(date, mymap);
-
+    return mymap;
 }
 
 function loadGeojson(date = "2013-11-01", mapLayer){
@@ -52,7 +48,19 @@ function loadDatepicker(){
     return datepicker_input.value;
 }
 
-document.addEventListener("DOMContentLoaded",loadMap, false);
+function loadPage(){
+    let mymap = loadMap();
+    let date = loadDatepicker()
+
+    console.log(date)
+    console.log(mymap)
+
+    if(date == ""){date = undefined}
+    loadGeojson(date, mymap);
+
+}
+
+document.addEventListener("DOMContentLoaded",loadPage, false);
 
 
 //end
