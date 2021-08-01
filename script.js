@@ -1,63 +1,80 @@
 //Loadding mapbox and openstreetmap
-let mapid = document.getElementById("map");
+function loadMap(){
 
-let mymap = L.map(mapid).setView([45.4729, 9.2187], 13);
+    let mapid = document.getElementById("map");
 
-L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.mapbox.com/">Mapbox</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    id: 'mapbox/streets-v11',
-    tileSize: 512,
-    zoomOffset: -1,
-    minZoom: 11,
-    maxZoom: 14,
-    accessToken: 'pk.eyJ1IjoiZ2dwc2dlb3JnZSIsImEiOiJja2xoNjRoNnk1YnRnMnJwbGhjdjdkMW9lIn0.kn_ZuIZt6PkfprwNnUPRwg'
-}).addTo(mymap);
-//end loading
+    let mymap = L.map(mapid).setView([45.4729, 9.2187], 13);
+    
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.mapbox.com/">Mapbox</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        minZoom: 11,
+        maxZoom: 14,
+        accessToken: 'pk.eyJ1IjoiZ2dwc2dlb3JnZSIsImEiOiJja2xoNjRoNnk1YnRnMnJwbGhjdjdkMW9lIn0.kn_ZuIZt6PkfprwNnUPRwg'
+    }).addTo(mymap);
+    
+    let date = loadDatepicker()
+    console.log(date)
+    if(date == ""){date = undefined}
+    loadGeojson(date, mymap);
 
-// Datapicker init
-$("#datepicker").datepicker({
-    "format": 'yyyy-mm-dd',
-    "startDate": '2013-11-01',
-    "endDate": '2013-12-23'
-});
+}
 
-let datepicker_input = document.getElementById("datepicker");
-console.log(datepicker_input.value);
-
-//Load geojson
-$.getJSON("dados\\geojsons\\"+datepicker_input.value+".geojson", function(data) {
-    data["features"].forEach(element => {
-        L.geoJSON(element["geometry"], {
-            color: element["properties"]["stroke"],
-            fillColor: element["properties"]["fill"],
-            fillOpacity: element["properties"]["fill-opacity"],
-            opacity: element["properties"]["stroke-opacity"],
-            weight: element["properties"]["stroke-width"],
-            id: element["id"],
-            activity: element["properties"]["activity"],
-            onEachFeature: onEachFeature
-        }).addTo(mymap);
+function loadGeojson(date = "2013-11-01", mapLayer){
+    $.getJSON("dados\\geojsons\\"+date+".geojson", function(data) {
+        data["features"].forEach(element => {
+            L.geoJSON(element["geometry"], {
+                color: element["properties"]["stroke"],
+                fillColor: element["properties"]["fill"],
+                fillOpacity: element["properties"]["fill-opacity"],
+                opacity: element["properties"]["stroke-opacity"],
+                weight: element["properties"]["stroke-width"],
+                id: element["id"],
+                activity: element["properties"]["activity"],
+                onEachFeature: onEachFeature
+            }).addTo(mapLayer);
+        });
     });
-})
+}
+
+function loadDatepicker(){
+// Datapicker init
+    $("#datepicker").datepicker({
+        "format": 'yyyy-mm-dd',
+        "startDate": '2013-11-01',
+        "endDate": '2013-12-22'
+    });
+    
+    let datepicker_input = document.getElementById("datepicker");
+
+    return datepicker_input.value;
+}
+
+document.addEventListener("DOMContentLoaded",loadMap, false);
+
+
 //end
 
-let modal = document.getElementById("modalId");
-let export_btn = document.getElementById("export-btn");
-let span = document.getElementsByClassName("close")[0];
 
-export_btn.onclick = function() {
-    modal.style.display = "block";
-}
+// let modal = document.getElementById("modalId");
+// let export_btn = document.getElementById("export-btn");
+// let span = document.getElementsByClassName("close")[0];
 
-span.onclick = function() {
-    modal.style.display = "none";
-}
+// export_btn.onclick = function() {
+//     modal.style.display = "block";
+// }
 
-window.onclick = function(event) {
-    if(event.target == modal){
-        modal.style.display = "none";
-    }
-}
+// span.onclick = function() {
+//     modal.style.display = "none";
+// }
+
+// window.onclick = function(event) {
+//     if(event.target == modal){
+//         modal.style.display = "none";
+//     }
+// }
 
 function onEachFeature(feature, layer){
     layer.on('click', function(){

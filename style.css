@@ -15,23 +15,48 @@ html, body {
     z-index: 0;
 }
 
-.main-container {
+.calendar {
     position: absolute;
-    width: 14%;
-    height: 35%;
-    left: 70%;
-    top: 0px;
-    background-color: white;
+    left: 85%;
+    top: 0%;
+    background: #8B7E7E;
     z-index: 1;
 }
 
-.calendar {
+.overlay {
+    position: fixed;
+    display: none;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: black;
+    opacity: 0.7;
+    z-index: 1001;
+}
+
+.overlay-graph {
+    position: fixed;
+    display: none;
+    top: 30px;
+    left: 30px;
+    width: 400px;
+    height: 250px;
+    background-color:#fff;
+    opacity: 1;
+    z-index: 1002;
+}
+
+.trigger {
     position: absolute;
-    left: 0%;
-    right: 0%;
-    top: 0%;
-    bottom: 48.91%;
-    background: #8B7E7E;
+    left: 85%;
+    top: 10%;
+    background: white;
+    z-index: 1;
+}
+
+#datepicker {
+    width: 100%;
 }
 
 .export-btn{
