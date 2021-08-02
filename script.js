@@ -1,3 +1,4 @@
+
 //Loadding mapbox and openstreetmap
 function loadMap(){
 
@@ -14,8 +15,19 @@ function loadMap(){
         maxZoom: 14,
         accessToken: 'pk.eyJ1IjoiZ2dwc2dlb3JnZSIsImEiOiJja2xoNjRoNnk1YnRnMnJwbGhjdjdkMW9lIn0.kn_ZuIZt6PkfprwNnUPRwg'
     }).addTo(mymap);
+
+    // limit the map bounds
+    let corner1 = L.latLng(45.35880131440966, 9.0114910478323);
+    let corner2 = L.latLng(45.56567970366364, 9.309665139520197);
+    let bounds = L.latLngBounds(corner1, corner2);
     
+    mymap.setMaxBounds(bounds);
+    mymap.on('drag', function(){
+        mymap.panInsideBounds(bounds, {animate: false});
+    })
+
     return mymap;
+
 }
 
 function loadGeojson(date = "2013-11-01", mapLayer){
@@ -33,6 +45,7 @@ function loadGeojson(date = "2013-11-01", mapLayer){
             }).addTo(mapLayer);
         });
     });
+    return mapLayer;
 }
 
 function loadDatepicker(){
@@ -52,19 +65,17 @@ function loadPage(){
     let mymap = loadMap();
     let date = loadDatepicker()
 
-    console.log(date)
-    console.log(mymap)
-
     if(date == ""){date = undefined}
-    loadGeojson(date, mymap);
-
+    mymap = loadGeojson(date, mymap);
 }
 
-document.addEventListener("DOMContentLoaded",loadPage, false);
+document.addEventListener("DOMContentLoaded", loadPage, false);
+console.log(L.map)
 
 
-//end
-
+//update page after choosing a day on the datepicker_input
+// let datepicker = document.getElementById("datepicker");
+// datepicker.addEventListener("click", loadGeojson(datepicker.value, loadMap()));
 
 // let modal = document.getElementById("modalId");
 // let export_btn = document.getElementById("export-btn");
