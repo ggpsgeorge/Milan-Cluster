@@ -1,10 +1,4 @@
-
-//Loadding mapbox and openstreetmap
-function loadMap(){
-
-    let mapid = document.getElementById("map");
-
-    let mymap = L.map(mapid).setView([45.4729, 9.2187], 13);
+function loadMap(mapLayer){
     
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.mapbox.com/">Mapbox</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -14,26 +8,23 @@ function loadMap(){
         minZoom: 11,
         maxZoom: 14,
         accessToken: 'pk.eyJ1IjoiZ2dwc2dlb3JnZSIsImEiOiJja2xoNjRoNnk1YnRnMnJwbGhjdjdkMW9lIn0.kn_ZuIZt6PkfprwNnUPRwg'
-    }).addTo(mymap);
+    }).addTo(mapLayer);
 
     // limit the map bounds
     let corner1 = L.latLng(45.35880131440966, 9.0114910478323);
     let corner2 = L.latLng(45.56567970366364, 9.309665139520197);
     let bounds = L.latLngBounds(corner1, corner2);
     
-    mymap.setMaxBounds(bounds);
-    mymap.on('drag', function(){
-        mymap.panInsideBounds(bounds, {animate: false});
-    })
-
-    return mymap;
-
+    mapLayer.setMaxBounds(bounds);
+    mapLayer.on('drag', function(){
+        mapLayer.panInsideBounds(bounds, {animate: false});
+    });
 }
 
-function loadGeojson(date = "2013-11-01", mapLayer){
+function loadGeojson(date = "2013-11-01", mapLayer, geojsonLayers){
     $.getJSON("dados\\geojsons\\"+date+".geojson", function(data) {
         data["features"].forEach(element => {
-            L.geoJSON(element["geometry"], {
+            let geojsonLayer = L.geoJSON(element["geometry"], {
                 color: element["properties"]["stroke"],
                 fillColor: element["properties"]["fill"],
                 fillOpacity: element["properties"]["fill-opacity"],
@@ -42,10 +33,17 @@ function loadGeojson(date = "2013-11-01", mapLayer){
                 id: element["id"],
                 activity: element["properties"]["activity"],
                 onEachFeature: onEachFeature
-            }).addTo(mapLayer);
+            });
+            geojsonLayers.push(geojsonLayer);
+            geojsonLayer.addTo(mapLayer);
         });
     });
-    return mapLayer;
+}
+
+function removeGeojsonLayers(mymap, geojsonLayers) {
+    geojsonLayers.forEach( layer => {
+        mymap.removeLayer(layer)
+    })
 }
 
 function loadDatepicker(){
@@ -55,23 +53,38 @@ function loadDatepicker(){
         "startDate": '2013-11-01',
         "endDate": '2013-12-22'
     });
-    
-    let datepicker_input = document.getElementById("datepicker");
-
-    return datepicker_input.value;
 }
 
 function loadPage(){
-    let mymap = loadMap();
-    let date = loadDatepicker()
+    loadMap(mymap);
+    loadDatepicker(datepicker)
 
-    if(date == ""){date = undefined}
-    mymap = loadGeojson(date, mymap);
+    if(datepicker.value == ""){datepicker.value = undefined}
+    loadGeojson(datepicker.value, mymap, geojsonLayers);
 }
 
-document.addEventListener("DOMContentLoaded", loadPage, false);
-console.log(L.map)
+//Init map layer
+let mapid = document.getElementById("map");
+let mymap = L.map(mapid).setView([45.4729, 9.2187], 13);
+let geojsonLayers = [];
+//Init datepicker
+let datepicker = document.getElementById("datepicker");
 
+//Load page
+document.addEventListener("DOMContentLoaded", loadPage, false);
+
+//Events
+datepicker.addEventListener("click", e => {
+    console.log(e);
+    console.log(datepicker.value);
+    console.log(geojsonLayers)
+    // console.log(Object.keys(mymap._layers).length);
+    // console.log(Object.values(mymap._layers)[1])
+    // console.log(Object.keys(mymap._layers).length)
+    removeGeojsonLayers(mymap, geojsonLayers)
+    geojsonLayers = []
+    loadGeojson(datepicker.value, mymap, geojsonLayers);
+})
 
 //update page after choosing a day on the datepicker_input
 // let datepicker = document.getElementById("datepicker");
