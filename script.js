@@ -41,7 +41,7 @@ function loadGeojson(date = "2013-11-01", mapLayer, geojsonLayers){
 }
 
 function removeGeojsonLayers(mymap, geojsonLayers) {
-    geojsonLayers.forEach( layer => {
+    geojsonLayers.forEach(layer => {
         mymap.removeLayer(layer)
     })
 }
@@ -74,21 +74,17 @@ let datepicker = document.getElementById("datepicker");
 document.addEventListener("DOMContentLoaded", loadPage, false);
 
 //Events
-datepicker.addEventListener("click", e => {
-    console.log(e);
-    console.log(datepicker.value);
-    console.log(geojsonLayers)
-    // console.log(Object.keys(mymap._layers).length);
-    // console.log(Object.values(mymap._layers)[1])
-    // console.log(Object.keys(mymap._layers).length)
-    removeGeojsonLayers(mymap, geojsonLayers)
-    geojsonLayers = []
-    loadGeojson(datepicker.value, mymap, geojsonLayers);
-})
-
-//update page after choosing a day on the datepicker_input
-// let datepicker = document.getElementById("datepicker");
-// datepicker.addEventListener("click", loadGeojson(datepicker.value, loadMap()));
+$("#datepicker").datepicker(
+    {
+        "format": 'yyyy-mm-dd',
+        "startDate": '2013-11-01',
+        "endDate": '2013-12-22'
+    }).on("changeDate", e => {
+        console.log(e)
+        removeGeojsonLayers(mymap, geojsonLayers)
+        geojsonLayers = []
+        loadGeojson(datepicker.value, mymap, geojsonLayers);
+    });
 
 // let modal = document.getElementById("modalId");
 // let export_btn = document.getElementById("export-btn");
