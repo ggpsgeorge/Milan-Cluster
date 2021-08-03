@@ -1,3 +1,30 @@
+//Init map layer
+let mapid = document.getElementById("map");
+let mymap = L.map(mapid).setView([45.4729, 9.2187], 13);
+let geojsonLayers = [];
+//Init datepicker
+let datepicker = document.getElementById("datepicker");
+
+//Load page
+document.addEventListener("DOMContentLoaded", loadPage, false);
+
+//Events
+$("#datepicker").datepicker({
+
+        "format": 'yyyy-mm-dd',
+        "startDate": '2013-11-01',
+        "endDate": '2013-12-22'
+
+    }).on("changeDate", e => {
+        console.log(e)
+        removeGeojsonLayers(mymap, geojsonLayers)
+        geojsonLayers = []
+        loadGeojson(datepicker.value, mymap, geojsonLayers);
+    });
+
+
+// ####################################
+
 function loadMap(mapLayer){
     
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -58,33 +85,10 @@ function loadDatepicker(){
 function loadPage(){
     loadMap(mymap);
     loadDatepicker(datepicker)
-
-    if(datepicker.value == ""){datepicker.value = undefined}
+    console.log(datepicker)
+    if(datepicker.value == ""){datepicker.value = datepicker.placeholder}
     loadGeojson(datepicker.value, mymap, geojsonLayers);
 }
-
-//Init map layer
-let mapid = document.getElementById("map");
-let mymap = L.map(mapid).setView([45.4729, 9.2187], 13);
-let geojsonLayers = [];
-//Init datepicker
-let datepicker = document.getElementById("datepicker");
-
-//Load page
-document.addEventListener("DOMContentLoaded", loadPage, false);
-
-//Events
-$("#datepicker").datepicker(
-    {
-        "format": 'yyyy-mm-dd',
-        "startDate": '2013-11-01',
-        "endDate": '2013-12-22'
-    }).on("changeDate", e => {
-        console.log(e)
-        removeGeojsonLayers(mymap, geojsonLayers)
-        geojsonLayers = []
-        loadGeojson(datepicker.value, mymap, geojsonLayers);
-    });
 
 // let modal = document.getElementById("modalId");
 // let export_btn = document.getElementById("export-btn");
