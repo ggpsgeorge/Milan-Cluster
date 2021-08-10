@@ -1,9 +1,29 @@
-//Init map layer
+//Init map layers
 let mapid = document.getElementById("map");
 let mymap = L.map(mapid).setView([45.4729, 9.2187], 13);
 let geojsonLayers = [];
-//Init datepicker
+//Marker var
+let mark = undefined;
+
 let datepicker = document.getElementById("datepicker");
+
+// let modal = document.getElementById("modalId");
+// let export_btn = document.getElementById("export-btn");
+// let span = document.getElementsByClassName("close")[0];
+
+// export_btn.onclick = function() {
+//     modal.style.display = "block";
+// }
+
+// span.onclick = function() {
+//     modal.style.display = "none";
+// }
+
+// window.onclick = function(event) {
+//     if(event.target == modal){
+//         modal.style.display = "none";
+//     }
+// }
 
 //Load page
 document.addEventListener("DOMContentLoaded", loadPage, false);
@@ -13,7 +33,8 @@ $("#datepicker").datepicker({
 
         "format": 'yyyy-mm-dd',
         "startDate": '2013-11-01',
-        "endDate": '2013-12-22'
+        "endDate": '2013-12-22',
+        "maxViewMode": 1,
 
     }).on("changeDate", e => {
         console.log(e)
@@ -41,7 +62,7 @@ function loadMap(mapLayer){
     let corner1 = L.latLng(45.35880131440966, 9.0114910478323);
     let corner2 = L.latLng(45.56567970366364, 9.309665139520197);
     let bounds = L.latLngBounds(corner1, corner2);
-    
+
     mapLayer.setMaxBounds(bounds);
     mapLayer.on('drag', function(){
         mapLayer.panInsideBounds(bounds, {animate: false});
@@ -76,55 +97,61 @@ function removeGeojsonLayers(mymap, geojsonLayers) {
 function loadDatepicker(){
 // Datapicker init
     $("#datepicker").datepicker({
+
         "format": 'yyyy-mm-dd',
         "startDate": '2013-11-01',
-        "endDate": '2013-12-22'
+        "endDate": '2013-12-22',
+        "maxViewMode": 1,
+        
     });
 }
 
 function loadPage(){
+
     loadMap(mymap);
     loadDatepicker(datepicker)
     console.log(datepicker)
+
     if(datepicker.value == ""){datepicker.value = datepicker.placeholder}
     loadGeojson(datepicker.value, mymap, geojsonLayers);
+    
 }
 
-// let modal = document.getElementById("modalId");
-// let export_btn = document.getElementById("export-btn");
-// let span = document.getElementsByClassName("close")[0];
 
-// export_btn.onclick = function() {
-//     modal.style.display = "block";
-// }
-
-// span.onclick = function() {
-//     modal.style.display = "none";
-// }
-
-// window.onclick = function(event) {
-//     if(event.target == modal){
-//         modal.style.display = "none";
-//     }
-// }
-
-function onEachFeature(feature, layer){
+function onEachFeature(feature, layer, mapLayer = mymap){
     layer.on('click', function(){
-        
+
         let activity = layer["defaultOptions"]["activity"];
         let activityObjs = []
-        // console.log(layer["defaultOptions"]["id"]);
-        // console.log(layer["defaultOptions"]["activity"])
+
         activity.forEach(array => {
             activityObjs.push({time: array[0], energy: array[1]});
         });
+        console.log(activityObjs);
 
-        // console.log(activityObjs);
+        console.log(layer);
+        console.log(layer._latlngs[0])
+        let polygonBound = L.latLngBounds(layer._latlngs[0][0], layer._latlngs[0][2]);
+
+        let center = polygonBound.getCenter();
+        
+        if(mark == undefined){
+            createMarker(center, mapLayer);
+        }else{
+            mapLayer.removeLayer(mark);
+            createMarker(center, mapLayer);
+        }
+        
         let bar_data = process_data(activityObjs)
         console.log(bar_data);
-        render_bars(bar_data);
+        // render_bars(bar_data);
 
     });
+}
+
+function createMarker(center, mapLayer){
+    mark = L.marker(center);
+    mark.addTo(mapLayer);
 }
 
 //Bar scripts
@@ -190,7 +217,7 @@ function render_bars(data){
 
 function process_data(data) {
 
-    console.log(data);
+    // console.log(data);
 
     let bar_data = [];
     let init_moment = give_moment_of_time(data[0].time);
