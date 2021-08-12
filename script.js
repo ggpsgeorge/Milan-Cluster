@@ -38,6 +38,7 @@ $("#datepicker").datepicker({
 
     }).on("changeDate", e => {
         console.log(e)
+        removeMarker(mymap, mark);
         removeGeojsonLayers(mymap, geojsonLayers)
         geojsonLayers = []
         loadGeojson(datepicker.value, mymap, geojsonLayers);
@@ -54,7 +55,7 @@ function loadMap(mapLayer){
         tileSize: 512,
         zoomOffset: -1,
         minZoom: 11,
-        maxZoom: 14,
+        maxZoom: 18,
         accessToken: 'pk.eyJ1IjoiZ2dwc2dlb3JnZSIsImEiOiJja2xoNjRoNnk1YnRnMnJwbGhjdjdkMW9lIn0.kn_ZuIZt6PkfprwNnUPRwg'
     }).addTo(mapLayer);
 
@@ -134,12 +135,12 @@ function onEachFeature(feature, layer, mapLayer = mymap){
         let polygonBound = L.latLngBounds(layer._latlngs[0][0], layer._latlngs[0][2]);
 
         let center = polygonBound.getCenter();
-        
+
         if(mark == undefined){
-            createMarker(center, mapLayer);
+            createMarker(mapLayer, center);
         }else{
-            mapLayer.removeLayer(mark);
-            createMarker(center, mapLayer);
+            removeMarker(mapLayer, mark);
+            createMarker(mapLayer, center);
         }
         
         let bar_data = process_data(activityObjs)
@@ -149,9 +150,24 @@ function onEachFeature(feature, layer, mapLayer = mymap){
     });
 }
 
-function createMarker(center, mapLayer){
-    mark = L.marker(center);
+function createMarker(mapLayer, center){
+    let centerString = (Object.values(center)); 
+    centerString = "Lat: " + centerString[0] + " Lon: " + centerString[1];
+    console.log(centerString);
+    let myIcon = L.icon({
+        iconUrl: "white_block_icon.png",
+        iconSize: [38, 38],
+        iconAnchor: [22, 38],
+        popupAnchor: [0, 0],
+    })
+    mark = L.marker(center, {icon: myIcon});
+    mark.setOpacity(0);
     mark.addTo(mapLayer);
+    mark.bindPopup(centerString).openPopup();
+}
+
+function removeMarker(mapLayer, marker){
+    mapLayer.removeLayer(marker);
 }
 
 //Bar scripts
