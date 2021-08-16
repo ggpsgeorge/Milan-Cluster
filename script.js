@@ -153,23 +153,46 @@ function onEachFeature(feature, layer, mapLayer = mymap){
 function createMarker(mapLayer, center){
     let centerString = (Object.values(center)); 
     centerString = "Lat: " + centerString[0] + " Lon: " + centerString[1];
-    console.log(centerString);
+
     let myIcon = L.icon({
         iconUrl: "white_block_icon.png",
         iconSize: [38, 38],
         iconAnchor: [22, 38],
         popupAnchor: [0, 0],
     })
+    
+    let content = document.getElementById("popup_template").innerHTML;
+
     mark = L.marker(center, {icon: myIcon});
     mark.setOpacity(0);
     mark.addTo(mapLayer);
-    mark.bindPopup(centerString).openPopup();
+    
+    
+    mark.bindPopup(content, {
+        minWidth: "100",
+        maxWidth: "300",
+    }).openPopup();
+
+    $("#chart-button").on("click", function(e) {
+        addOverlay();
+    });
+
+    $("#close-button").on("click", function(e) {
+        removeOverlay();
+    })
 }
 
 function removeMarker(mapLayer, marker){
     mapLayer.removeLayer(marker);
 }
 
+function addOverlay(){
+    document.getElementById("overlay").style.display = "block";
+}
+
+function removeOverlay(){
+    document.getElementById("overlay").style.display = "none";
+}
 //Bar scripts
 
 function render_bars(data){

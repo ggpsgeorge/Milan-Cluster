@@ -29,13 +29,25 @@
         <input type="text" id="datepicker" placeholder="2013-11-01">
     </div>    
 
-
-    <button class="trigger btn btn-primary">Trigger overlay!</button>
+    <template id="popup_template">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    Row 1 Col 1
+                </div>
+                <div class="col">
+                    <button id="chart-button"type="button" class="btn btn-primary btn-block">Charts</button>
+                </div>
+            </div>
+        </div>
+    </template>
     
-    <div class="overlay"></div>
-    <div class="overlay-graph">
-        <button type="button" class="close" data-dismiss="overlay-graph" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+    <div id="overlay" class="container">
+        <div id="close-container" class="position-relative">
+            <div class="position-absolute top-0 start-100 translate-middle">
+                <button id="close-button" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+            </div>
+        </div>
     </div>
 
     <div id="modalId" class="modal" role="dialog">
