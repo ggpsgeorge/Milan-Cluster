@@ -25,9 +25,11 @@
 
     <div id="map"></div>
 
-    <div class="calendar">
+    <div id="calendar" class="container">
         <input type="text" id="datepicker" placeholder="2013-11-01">
-    </div>    
+    </div>
+    
+    <button id="export-button" class="btn btn-primary">Export</button>
 
     <template id="popup_template">
         <div class="container-fluid">
@@ -43,6 +45,9 @@
     </template>
     
     <div id="overlay" class="container">
+        <div id="graph-container" class="position-absolute top-0 start-0">
+            <svg class="bar" width="100%" height="100%"></svg>
+        </div>
         <div id="close-container" class="position-relative">
             <div class="position-absolute top-0 start-100 translate-middle">
                 <button id="close-button" type="button" class="btn-close btn-close-white" aria-label="Close"></button>

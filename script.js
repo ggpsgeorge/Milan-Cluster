@@ -7,23 +7,23 @@ let mark = undefined;
 
 let datepicker = document.getElementById("datepicker");
 
-// let modal = document.getElementById("modalId");
-// let export_btn = document.getElementById("export-btn");
-// let span = document.getElementsByClassName("close")[0];
+let modal = document.getElementById("modalId");
+let export_button = document.getElementById("export-button");
+let span = document.getElementsByClassName("close")[0];
 
-// export_btn.onclick = function() {
-//     modal.style.display = "block";
-// }
+export_button.onclick = function() {
+    modal.style.display = "block";
+}
 
-// span.onclick = function() {
-//     modal.style.display = "none";
-// }
+span.onclick = function() {
+    modal.style.display = "none";
+}
 
-// window.onclick = function(event) {
-//     if(event.target == modal){
-//         modal.style.display = "none";
-//     }
-// }
+window.onclick = function(event) {
+    if(event.target == modal){
+        modal.style.display = "none";
+    }
+}
 
 //Load page
 document.addEventListener("DOMContentLoaded", loadPage, false);
@@ -37,7 +37,6 @@ $("#datepicker").datepicker({
         "maxViewMode": 1,
 
     }).on("changeDate", e => {
-        console.log(e)
         removeMarker(mymap, mark);
         removeGeojsonLayers(mymap, geojsonLayers)
         geojsonLayers = []
@@ -128,10 +127,9 @@ function onEachFeature(feature, layer, mapLayer = mymap){
         activity.forEach(array => {
             activityObjs.push({time: array[0], energy: array[1]});
         });
-        console.log(activityObjs);
+        
+        // console.log(activityObjs);
 
-        console.log(layer);
-        console.log(layer._latlngs[0])
         let polygonBound = L.latLngBounds(layer._latlngs[0][0], layer._latlngs[0][2]);
 
         let center = polygonBound.getCenter();
@@ -145,7 +143,7 @@ function onEachFeature(feature, layer, mapLayer = mymap){
         
         let bar_data = process_data(activityObjs)
         console.log(bar_data);
-        // render_bars(bar_data);
+        render_bars(bar_data);
 
     });
 }
@@ -173,16 +171,14 @@ function createMarker(mapLayer, center){
         maxWidth: "300",
     }).openPopup();
 
-    $("#chart-button").on("click", function(e) {
-        addOverlay();
-    });
+    let chart_button = document.getElementById("chart-button");
+    let close_button = document.getElementById("close-button");
 
-    $("#close-button").on("click", function(e) {
-        removeOverlay();
-    })
+    chart_button.addEventListener("click", addOverlay, false);
+    close_button.addEventListener("click", removeOverlay, false);
 }
 
-function removeMarker(mapLayer, marker){
+function removeMarker(mapLayer, marker) {
     mapLayer.removeLayer(marker);
 }
 
@@ -255,8 +251,6 @@ function render_bars(data){
 }
 
 function process_data(data) {
-
-    // console.log(data);
 
     let bar_data = [];
     let init_moment = give_moment_of_time(data[0].time);

@@ -15,11 +15,11 @@ html, body {
     z-index: 0;
 }
 
-.calendar {
-    position: absolute;
-    left: 85%;
+#calendar {
+    position: fixed;
+    left: 70%;
     top: 0%;
-    background: #8B7E7E;
+    width: 15%;
     z-index: 1;
 }
 
@@ -30,8 +30,16 @@ html, body {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: black;
-    opacity: 0.7;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+}
+
+#graph-container {
+    position: fixed;
+    height: 50%;
+    width: 50%;
+    margin: 0;
+    background-color: rgb(255, 255, 255, 1);
     z-index: 1001;
 }
 
@@ -45,12 +53,10 @@ html, body {
     width: 100%;
 }
 
-.export-btn{
-    position: absolute;
-    left: 0%;
-    right: 0%;
-    top: 51.09%;
-    bottom: 24.45%;
+#export-button{
+    position: fixed;
+    left: 85%;
+    top: 0%;
     background: #08B82F;
 }
 
