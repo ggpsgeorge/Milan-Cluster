@@ -36,8 +36,6 @@ html, body {
 
 #graph-container {
     position: fixed;
-    height: 50%;
-    width: 50%;
     margin: 0;
     background-color: rgb(255, 255, 255, 1);
     z-index: 1001;
@@ -58,31 +56,6 @@ html, body {
     left: 85%;
     top: 0%;
     background: #08B82F;
-}
-
-.chart-btn {
-    position: absolute;
-    left: 0%;
-    right: 0%;
-    top: 75.55%;
-    bottom: 0%;
-    background: #6085E6;
-}
-
-.btn-download {
-    position: absolute;
-    top: 53px;
-    background-color: DodgerBlue;
-    border: none;
-    color: white;
-    padding: 12px 30px;
-    cursor: pointer;
-    font-size: 20px;
-}
-  
-  /* Darker background on mouse-over */
-.btn-download:hover {
-    background-color: RoyalBlue;
 }
 
 /* start modal */

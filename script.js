@@ -167,15 +167,21 @@ function createMarker(mapLayer, center){
     
     
     mark.bindPopup(content, {
-        minWidth: "100",
-        maxWidth: "300",
+        minWidth: "250",
+        maxWidth: "400",
     }).openPopup();
 
     let chart_button = document.getElementById("chart-button");
     let close_button = document.getElementById("close-button");
+    let latlong = document.getElementById("latlong");
+
+    latlong.innerText = centerString;
 
     chart_button.addEventListener("click", addOverlay, false);
     close_button.addEventListener("click", removeOverlay, false);
+
+    mark.update();
+    
 }
 
 function removeMarker(mapLayer, marker) {
