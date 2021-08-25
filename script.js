@@ -9,21 +9,22 @@ let datepicker = document.getElementById("datepicker");
 
 let modal = document.getElementById("modalId");
 let export_button = document.getElementById("export-button");
-let span = document.getElementsByClassName("close")[0];
+let closeButtonModal = document.getElementById("close-button-modal");
 
-export_button.onclick = function() {
+export_button.addEventListener("click", function() {
     modal.style.display = "block";
-}
+});;
 
-span.onclick = function() {
+closeButtonModal.addEventListener("click", function() {
     modal.style.display = "none";
-}
+});
 
-window.onclick = function(event) {
+window.addEventListener("click", function() {
     if(event.target == modal){
         modal.style.display = "none";
     }
-}
+});
+
 
 //Load page
 document.addEventListener("DOMContentLoaded", loadPage, false);
@@ -134,21 +135,18 @@ function onEachFeature(feature, layer, mapLayer = mymap){
 
         let center = polygonBound.getCenter();
 
+        let bar_data = process_data(activityObjs)
+
         if(mark == undefined){
-            createMarker(mapLayer, center);
+            createMarker(mapLayer, center, bar_data);
         }else{
             removeMarker(mapLayer, mark);
-            createMarker(mapLayer, center);
-        }
-        
-        let bar_data = process_data(activityObjs)
-        console.log(bar_data);
-        render_bars(bar_data);
-
+            createMarker(mapLayer, center, bar_data);
+        }  
     });
 }
 
-function createMarker(mapLayer, center){
+function createMarker(mapLayer, center, bar_data){
     let centerString = (Object.values(center)); 
     centerString = "Lat: " + centerString[0] + " Lon: " + centerString[1];
 
@@ -177,8 +175,16 @@ function createMarker(mapLayer, center){
 
     latlong.innerText = centerString;
 
-    chart_button.addEventListener("click", addOverlay, false);
-    close_button.addEventListener("click", removeOverlay, false);
+    let anomalies_chart = undefined;
+
+    chart_button.addEventListener("click", function(){
+        addOverlay()
+        anomalies_chart = drawChart(bar_data)
+    }, false);
+    close_button.addEventListener("click", function(){
+        anomalies_chart.destroy();
+        removeOverlay();
+    }, false);
 
     mark.update();
     
@@ -195,85 +201,32 @@ function addOverlay(){
 function removeOverlay(){
     document.getElementById("overlay").style.display = "none";
 }
-//Bar scripts
-
-function render_bars(data){
-
-    d3.select('.bar').selectAll('*').remove();
-    
-    let svg_bar = d3.select(".bar");
-    const margin = {top: 20, bottom: 20, left: 40, right: 20};
-    const innerWidth = svg_bar.attr("width") - margin.left - margin.right;
-    const innerHeight = svg_bar.attr("height") - margin.top - margin.bottom;
-    const xValue = elem => elem.moment;
-    const yValue = elem => elem.number_of_anomalies;
-    
-    const xScale = d3.scaleBand()
-        .domain(["Dawn", "Morning", "Afternoon", "Night"])
-        .range([0, innerWidth])
-        .padding(0.07);
-
-    const xAxis = d3.axisBottom(xScale);
-
-    const yScale = d3.scaleLinear()
-        .domain([0, 40]) 
-        .range([innerHeight, 0]);
-
-    const yAxis = d3.axisLeft(yScale);
-
-    const g_cluster = svg_bar.append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    g_cluster.append("g").call(xAxis)
-        .attr("font-size", "10px")
-        .attr("transform", `translate(0, ${innerHeight})`);
-    
-    g_cluster.append("g").call(yAxis);
-
-    // insert grid 
-    g_cluster.append("g")
-        .attr('class', 'grid')
-        .call(d3.axisLeft()
-            .scale(yScale)
-            .tickSize(-innerWidth, 0, 0)
-            .tickFormat(''))
-
-    g_cluster.selectAll("rect").data(data)
-        .enter().append("rect")
-            .attr("x", d => xScale(xValue(d)))
-            .attr("y", d => yScale(yValue(d)))
-            .attr("height", d => innerHeight - yScale(yValue(d)))
-            .attr("width", xScale.bandwidth());
-
-    // labels
-    // Y label
-    g_cluster.append('text')
-        .attr('x', -(innerHeight / 2.5) - margin.top)
-        .attr('y', -margin.left / 1.6)
-        .attr('transform', 'rotate(-90)')
-        .attr('text-anchor', 'middle')
-        .text('Number of anomalies')
-    
-}
 
 function process_data(data) {
+    
+    let bar_data = {
+        'Dawn' : 0,
+        'Morning': 0,
+        'Afternoon': 0,
+        'Night': 0
+    };
 
-    let bar_data = [];
-    let init_moment = give_moment_of_time(data[0].time);
-    let anomalies_counter = 0;
-
-    data.forEach(elem => {
-        let actual_moment = give_moment_of_time(elem.time);
-        if(actual_moment == init_moment) {
-            anomalies_counter += 1;
-        }else{
-            bar_data.push({moment: init_moment, number_of_anomalies: anomalies_counter});
-            init_moment = actual_moment;
-            anomalies_counter = 1;
-        }        
-    })
-    // last obj
-    bar_data.push({moment: init_moment, number_of_anomalies:anomalies_counter})
+    data.forEach(element => {
+        switch(give_moment_of_time(element.time)){
+            case 'Dawn': 
+                bar_data['Dawn'] += 1;
+                break;
+            case 'Morning': 
+                bar_data['Morning'] += 1;
+                break;
+            case 'Afternoon': 
+                bar_data['Afternoon'] += 1;
+                break;
+            case 'Night': 
+                bar_data['Night'] += 1;
+                break;
+        }
+    });
 
     return bar_data;
 }
@@ -290,5 +243,49 @@ function give_moment_of_time(time) {
     }
 }
 
+// Charts
+
+function drawChart(bar_data){ 
+    
+    console.log(bar_data);
+
+    data_number_of_anomalies = [bar_data['Dawn'], bar_data['Morning'], bar_data['Afternoon'], bar_data['Night']];
+
+    console.log(data_number_of_anomalies);
+    
+    let ctx = document.getElementById('number-anomalies-chart').getContext('2d');
+    let anomalies_chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Dawn', 'Morning', 'Afternoon','Night'],
+            datasets: [{
+                label: 'Number of Anomalies',
+                data: data_number_of_anomalies,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(164, 164, 164, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(164, 164, 164, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 40,
+                }
+            }
+        }
+    });
+    return anomalies_chart;
+}
 
 

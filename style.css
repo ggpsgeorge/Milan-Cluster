@@ -124,14 +124,9 @@ html, body {
     cursor: pointer;
 }
 
-/* graphs styles */
-.bar {
-    background-color: #A6B4BA;
-}
-
-rect {
-    fill: steelblue;
-}
-rect:hover{
-    opacity: 0.8;
+#gradient {
+    height: 20px;
+    width: 380px;
+    bottom: 30px;
+    background: linear-gradient(90deg, rgba(60,84,136,1) 0%, rgba(77,187,213,1) 0%, rgba(255,190,125,1) 49%, rgba(225,87,89,1) 100%); 
 }
