@@ -111,7 +111,6 @@ function loadPage(){
 
     loadMap(mymap);
     loadDatepicker(datepicker)
-    console.log(datepicker)
 
     if(datepicker.value == ""){datepicker.value = datepicker.placeholder}
     loadGeojson(datepicker.value, mymap, geojsonLayers);
@@ -138,15 +137,15 @@ function onEachFeature(feature, layer, mapLayer = mymap){
         let bar_data = process_data(activityObjs)
 
         if(mark == undefined){
-            createMarker(mapLayer, center, bar_data);
+            createMarker(mapLayer, center, bar_data, activityObjs);
         }else{
             removeMarker(mapLayer, mark);
-            createMarker(mapLayer, center, bar_data);
+            createMarker(mapLayer, center, bar_data, activityObjs);
         }  
     });
 }
 
-function createMarker(mapLayer, center, bar_data){
+function createMarker(mapLayer, center, bar_data, energy_data){
     let centerString = (Object.values(center)); 
     centerString = "Lat: " + centerString[0] + " Lon: " + centerString[1];
 
@@ -175,14 +174,17 @@ function createMarker(mapLayer, center, bar_data){
 
     latlong.innerText = centerString;
 
-    let anomalies_chart = undefined;
+    let number_anomalies_chart = undefined;
+    // let energy_time_chart = undefined;
 
     chart_button.addEventListener("click", function(){
         addOverlay()
-        anomalies_chart = drawChart(bar_data)
+        number_anomalies_chart = drawNumberOfAnomaliesChart(bar_data)
+        // energy_time_chart = drawEnergyTimeChart(energy_data)
     }, false);
     close_button.addEventListener("click", function(){
-        anomalies_chart.destroy();
+        number_anomalies_chart.destroy();
+        // energy_time_chart.destroy();
         removeOverlay();
     }, false);
 
@@ -204,6 +206,8 @@ function removeOverlay(){
 
 function process_data(data) {
     
+    console.log(data)
+
     let bar_data = {
         'Dawn' : 0,
         'Morning': 0,
@@ -245,15 +249,16 @@ function give_moment_of_time(time) {
 
 // Charts
 
-function drawChart(bar_data){ 
+function drawNumberOfAnomaliesChart(bar_data){ 
     
-    console.log(bar_data);
-
     data_number_of_anomalies = [bar_data['Dawn'], bar_data['Morning'], bar_data['Afternoon'], bar_data['Night']];
-
-    console.log(data_number_of_anomalies);
     
-    let ctx = document.getElementById('number-anomalies-chart').getContext('2d');
+    let number_anomalies_chart = document.getElementById("number-anomalies-chart");
+    
+    let ctx = number_anomalies_chart.getContext('2d');
+
+    
+
     let anomalies_chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -288,4 +293,7 @@ function drawChart(bar_data){
     return anomalies_chart;
 }
 
+function drawEnergyTimeChart(energy_data){
+    
+}
 

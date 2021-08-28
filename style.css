@@ -35,15 +35,11 @@ html, body {
 }
 
 #graph-container {
-    position: fixed;
-    margin: 0;
     background-color: rgb(255, 255, 255, 1);
     z-index: 1001;
 }
 
 #close-container {
-    top: 25%;
-    right: 25%;
     z-index: 1001;
 }
 
