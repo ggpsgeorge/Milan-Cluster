@@ -34,12 +34,13 @@ html, body {
     z-index: 1001;
 }
 
-#graph-container {
+.graph-container {
+    display: block;
     background-color: rgb(255, 255, 255, 1);
     z-index: 1001;
 }
 
-#close-container {
+.close-container {
     z-index: 1001;
 }
 

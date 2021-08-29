@@ -175,12 +175,12 @@ function createMarker(mapLayer, center, bar_data, energy_data){
     latlong.innerText = centerString;
 
     let number_anomalies_chart = undefined;
-    // let energy_time_chart = undefined;
+    let energy_time_chart = undefined;
 
     chart_button.addEventListener("click", function(){
         addOverlay()
         number_anomalies_chart = drawNumberOfAnomaliesChart(bar_data)
-        // energy_time_chart = drawEnergyTimeChart(energy_data)
+        energy_time_chart = drawEnergyTimeChart(bar_data)
     }, false);
     close_button.addEventListener("click", function(){
         number_anomalies_chart.destroy();
@@ -206,8 +206,6 @@ function removeOverlay(){
 
 function process_data(data) {
     
-    console.log(data)
-
     let bar_data = {
         'Dawn' : 0,
         'Morning': 0,
@@ -293,7 +291,45 @@ function drawNumberOfAnomaliesChart(bar_data){
     return anomalies_chart;
 }
 
-function drawEnergyTimeChart(energy_data){
+function drawEnergyTimeChart(bar_data){
+
+    data_number_of_anomalies = [bar_data['Dawn'], bar_data['Morning'], bar_data['Afternoon'], bar_data['Night']];
     
+    let energy_time_line_chart = document.getElementById("energy-time-line-graph");
+    
+    let ctx = energy_time_line_chart.getContext('2d');
+
+    let energy_time_chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Dawn', 'Morning', 'Afternoon','Night'],
+            datasets: [{
+                label: 'Number of Anomalies',
+                data: data_number_of_anomalies,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(164, 164, 164, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(164, 164, 164, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 40,
+                }
+            }
+        }
+    });
+    return energy_time_chart;
 }
 
