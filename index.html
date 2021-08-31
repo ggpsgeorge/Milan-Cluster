@@ -44,9 +44,10 @@
     </template>
     
     <div id="overlay" class="container-fluid">
-        <div class="row">
+        <div class="row p-1">
             <div class="col"></div>
-            <div class="col-6">
+            <div class="col"></div>
+            <div class="col-5">
                 <div class="graph-container">
                     <canvas id="number-anomalies-chart"></canvas>
                 </div>
@@ -58,14 +59,14 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row p-1">
             <div class="col"></div>
-            <div class="col">
+            <div class="col-5">
                 <div class="graph-container">
                     <canvas id="energy-time-line-graph"></canvas>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-5">
                 <div class="graph-container">
                     <canvas id="energy-time-bar-graph"></canvas>
                 </div>
@@ -79,15 +80,30 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="modal-title">
-                        Choose files
+                        Files
                     </div>
                     <button id="close-button-modal" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="download">
-                        <a href="dados\\geojsons\\2013-11-03.geojson" download="2013-11-03.geojson" target="_blank" >
-                            <button class="btn btn-primary"><i class="fa fa-download"></i>2013/11/03.geojson</button>
-                        </a>
+                    <div class="container">
+                        <div class="row p-1">
+                            <div class="col">
+                                <div class="download">
+                                    <a id="download-geojson-link" href="dados\\geojsons\\" download="" target="_blank" >
+                                        <button id="download-geojson-button" class="btn btn-primary"><i class="fa fa-download"></i></button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-1">
+                            <div class="col">
+                                <div class="download">
+                                    <a id="download-csv-link" href="dados//days//" download="" target="_blank">
+                                        <button id="download-csv-button" class="btn btn-outline-secondary"><i class="fa fa-download"></i></button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

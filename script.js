@@ -7,25 +7,6 @@ let mark = undefined;
 
 let datepicker = document.getElementById("datepicker");
 
-let modal = document.getElementById("modalId");
-let export_button = document.getElementById("export-button");
-let closeButtonModal = document.getElementById("close-button-modal");
-
-export_button.addEventListener("click", function() {
-    modal.style.display = "block";
-});;
-
-closeButtonModal.addEventListener("click", function() {
-    modal.style.display = "none";
-});
-
-window.addEventListener("click", function() {
-    if(event.target == modal){
-        modal.style.display = "none";
-    }
-});
-
-
 //Load page
 document.addEventListener("DOMContentLoaded", loadPage, false);
 
@@ -89,6 +70,49 @@ function loadGeojson(date = "2013-11-01", mapLayer, geojsonLayers){
     });
 }
 
+function loadModal(datepicker){
+    
+    let modal = document.getElementById("modalId");
+    let export_button = document.getElementById("export-button");
+    let closeButtonModal = document.getElementById("close-button-modal");
+
+    export_button.addEventListener("click", function() {
+        modal.style.display = "block";
+        
+        if(datepicker.value == ""){datepicker.value = datepicker.placeholder}
+
+        let geojson_file = datepicker.value+".geojson"
+        let csv_file = datepicker.value+".csv"
+        
+        download_geojson_link = document.getElementById("download-geojson-link");
+        download_csv_link = document.getElementById("download-csv-link")
+        download_geojson_link.href += geojson_file;
+        download_csv_link.href += csv_file;
+        
+        download_geojson_button = document.getElementById("download-geojson-button");
+        download_csv_button = document.getElementById("download-csv-button")
+        download_geojson_button.innerHTML = geojson_file;
+        download_csv_button.innerHTML = csv_file;
+
+    });
+
+    closeButtonModal.addEventListener("click", function() {
+        modal.style.display = "none";
+        download_geojson_link.href -= geojson_file;
+        download_csv_link.href -= csv_file;
+    });
+
+    window.addEventListener("click", function(e) {
+        if(e.target == modal){
+            modal.style.display = "none";
+            download_geojson_link.href -= geojson_file;
+            download_csv_link.href -= csv_file;
+
+        }
+    });
+
+}
+
 function removeGeojsonLayers(mymap, geojsonLayers) {
     geojsonLayers.forEach(layer => {
         mymap.removeLayer(layer)
@@ -111,6 +135,7 @@ function loadPage(){
 
     loadMap(mymap);
     loadDatepicker(datepicker)
+    loadModal(datepicker)
 
     if(datepicker.value == ""){datepicker.value = datepicker.placeholder}
     loadGeojson(datepicker.value, mymap, geojsonLayers);
@@ -175,16 +200,16 @@ function createMarker(mapLayer, center, bar_data, energy_data){
     latlong.innerText = centerString;
 
     let number_anomalies_chart = undefined;
-    let energy_time_chart = undefined;
+    let energy_time_line_chart = undefined;
 
     chart_button.addEventListener("click", function(){
         addOverlay()
-        number_anomalies_chart = drawNumberOfAnomaliesChart(bar_data)
-        energy_time_chart = drawEnergyTimeChart(bar_data)
+        number_anomalies_chart = drawNumberOfAnomaliesChart(bar_data);
+        energy_time_line_chart = drawLineEnergyTimeChart(energy_data);
     }, false);
     close_button.addEventListener("click", function(){
         number_anomalies_chart.destroy();
-        // energy_time_chart.destroy();
+        energy_time_line_chart.destroy();
         removeOverlay();
     }, false);
 
@@ -247,20 +272,21 @@ function give_moment_of_time(time) {
 
 // Charts
 
+function create_context_charts(element_id){
+    let ctx = document.getElementById(element_id).getContext('2d');
+    return ctx
+}
+
 function drawNumberOfAnomaliesChart(bar_data){ 
     
     data_number_of_anomalies = [bar_data['Dawn'], bar_data['Morning'], bar_data['Afternoon'], bar_data['Night']];
     
-    let number_anomalies_chart = document.getElementById("number-anomalies-chart");
-    
-    let ctx = number_anomalies_chart.getContext('2d');
-
-    
+    let ctx = create_context_charts("number-anomalies-chart");
 
     let anomalies_chart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Dawn', 'Morning', 'Afternoon','Night'],
+            labels: ['Dawn', 'Morning', 'Afternoon', 'Night'],
             datasets: [{
                 label: 'Number of Anomalies',
                 data: data_number_of_anomalies,
@@ -291,45 +317,46 @@ function drawNumberOfAnomaliesChart(bar_data){
     return anomalies_chart;
 }
 
-function drawEnergyTimeChart(bar_data){
+function drawLineEnergyTimeChart(energy_data){
 
-    data_number_of_anomalies = [bar_data['Dawn'], bar_data['Morning'], bar_data['Afternoon'], bar_data['Night']];
-    
-    let energy_time_line_chart = document.getElementById("energy-time-line-graph");
-    
-    let ctx = energy_time_line_chart.getContext('2d');
+    let ctx = create_context_charts("energy-time-line-graph");
 
-    let energy_time_chart = new Chart(ctx, {
-        type: 'bar',
+    let labels = []
+    let energy = []
+
+    energy_data.forEach(function(e){
+        labels.push(e.time.toFixed(2));
+        energy.push(e.energy);
+    })
+
+    console.log(labels, energy, energy_data)
+
+    let line_chart = new Chart(ctx, {
+        type: 'scatter',
         data: {
-            labels: ['Dawn', 'Morning', 'Afternoon','Night'],
+            labels: labels,
             datasets: [{
-                label: 'Number of Anomalies',
-                data: data_number_of_anomalies,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(164, 164, 164, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(164, 164, 164, 1)'
-                ],
-                borderWidth: 1
+                label: "Energy x Time",
+                data: energy,
+                fill: false,
+                borderColor: "#8e5ea2"
             }]
         },
         options: {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 40,
+                    min: -35
+                },
+                x: {
+                    beginAtZero: true,
+                    max: 24
                 }
             }
         }
-    });
-    return energy_time_chart;
+    })
+
+    return line_chart
+
 }
 
