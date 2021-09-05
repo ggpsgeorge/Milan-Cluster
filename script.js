@@ -205,7 +205,7 @@ function createMarker(mapLayer, center, bar_data, energy_data){
     chart_button.addEventListener("click", function(){
         addOverlay()
         number_anomalies_chart = drawNumberOfAnomaliesChart(bar_data);
-        energy_time_line_chart = drawLineEnergyTimeChart(energy_data);
+        energy_time_scatter_chart = drawEnergyTimeScatterChart(energy_data);
     }, false);
     close_button.addEventListener("click", function(){
         number_anomalies_chart.destroy();
@@ -317,7 +317,7 @@ function drawNumberOfAnomaliesChart(bar_data){
     return anomalies_chart;
 }
 
-function drawLineEnergyTimeChart(energy_data){
+function drawEnergyTimeScatterChart(energy_data){
 
     let ctx = create_context_charts("energy-time-line-graph");
 
@@ -360,3 +360,6 @@ function drawLineEnergyTimeChart(energy_data){
 
 }
 
+function drawEnergyTimeMeanChart(energy_data){
+    console.log(energy_data)
+}
