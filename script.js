@@ -200,7 +200,7 @@ function createMarker(mapLayer, center, bar_data, energy_data){
     latlong.innerText = centerString;
 
     let number_anomalies_chart = undefined;
-    let energy_time_line_chart = undefined;
+    let energy_time_scatter_chart = undefined;
 
     chart_button.addEventListener("click", function(){
         addOverlay()
@@ -319,24 +319,24 @@ function drawNumberOfAnomaliesChart(bar_data){
 
 function drawEnergyTimeScatterChart(energy_data){
 
-    let ctx = create_context_charts("energy-time-line-graph");
+    let ctx = create_context_charts("energy-time-scatter-graph");
 
     let labels = []
     let energy = []
 
     energy_data.forEach(function(e){
-        labels.push(e.time.toFixed(2));
+        labels.push(e.time%1*60 + Math.floor(e.time)*3600)
         energy.push(e.energy);
     })
 
     console.log(labels, energy, energy_data)
 
-    let line_chart = new Chart(ctx, {
+    let scatter_chart = new Chart(ctx, {
         type: 'scatter',
         data: {
             labels: labels,
             datasets: [{
-                label: "Energy x Time",
+                label: "Energy(FSI) x Time(hh:mm:ss)",
                 data: energy,
                 fill: false,
                 borderColor: "#8e5ea2"
@@ -350,13 +350,13 @@ function drawEnergyTimeScatterChart(energy_data){
                 },
                 x: {
                     beginAtZero: true,
-                    max: 24
+                    max: 86400
                 }
             }
         }
     })
 
-    return line_chart
+    return scatter_chart
 
 }
 
