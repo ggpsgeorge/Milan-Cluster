@@ -209,7 +209,7 @@ function createMarker(mapLayer, center, bar_data, energy_data){
     }, false);
     close_button.addEventListener("click", function(){
         number_anomalies_chart.destroy();
-        energy_time_line_chart.destroy();
+        energy_time_scatter_chart.destroy();
         removeOverlay();
     }, false);
 
