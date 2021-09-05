@@ -19,10 +19,16 @@ $("#datepicker").datepicker({
         "maxViewMode": 1,
 
     }).on("changeDate", e => {
-        removeMarker(mymap, mark);
-        removeGeojsonLayers(mymap, geojsonLayers)
-        geojsonLayers = []
-        loadGeojson(datepicker.value, mymap, geojsonLayers);
+        if(mark == undefined){
+            removeGeojsonLayers(mymap, geojsonLayers)
+            geojsonLayers = []
+            loadGeojson(datepicker.value, mymap, geojsonLayers);
+        }else{
+            removeMarker(mymap, mark);
+            removeGeojsonLayers(mymap, geojsonLayers)
+            geojsonLayers = []
+            loadGeojson(datepicker.value, mymap, geojsonLayers);
+        }
     });
 
 
@@ -336,7 +342,7 @@ function drawEnergyTimeScatterChart(energy_data){
         data: {
             labels: labels,
             datasets: [{
-                label: "Energy(FSI) x Time(hh:mm:ss)",
+                label: "Anomaly Energy(FSI) x Time(Segs)",
                 data: energy,
                 fill: false,
                 borderColor: "#8e5ea2"
@@ -346,11 +352,33 @@ function drawEnergyTimeScatterChart(energy_data){
             scales: {
                 y: {
                     beginAtZero: true,
-                    min: -35
+                    min: -35,
+                    max: 5
                 },
                 x: {
                     beginAtZero: true,
+                    min: 0,
                     max: 86400
+                }
+            },
+            plugins: {
+                zoom: {
+                    zoom: {
+                        wheel: {
+                            enabled: true,
+                        },
+                        pinch: {
+                            enabled: false,
+                        },
+                        mode: 'xy',
+                        drag: {
+                            enabled: false,
+                        }
+                    },
+                    limits: {
+                        y: {min: -35, max: 0},
+                        x: {min: 0, max: 86400}
+                    },
                 }
             }
         }
