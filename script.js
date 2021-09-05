@@ -104,16 +104,15 @@ function loadModal(datepicker){
 
     closeButtonModal.addEventListener("click", function() {
         modal.style.display = "none";
-        download_geojson_link.href -= geojson_file;
-        download_csv_link.href -= csv_file;
+        download_geojson_link.href = "dados\\geojsons\\";
+        download_csv_link.href = "dados\\days\\";
     });
 
     window.addEventListener("click", function(e) {
         if(e.target == modal){
             modal.style.display = "none";
-            download_geojson_link.href -= geojson_file;
-            download_csv_link.href -= csv_file;
-
+            download_geojson_link.href = "dados\\geojsons\\";
+            download_csv_link.href = "dados\\days\\";
         }
     });
 
