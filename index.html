@@ -36,10 +36,16 @@
     <template id="popup_template">
         <div class="container-fluid">
             <div class="row">
-                <div id="latlong" class="col"></div>
                 <div class="col">
+                    <h3 id="latlong"></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-5">
                     <button id="chart-button"type="button" class="btn btn-primary btn-block">Charts</button>
                 </div>
+                <div class="col"></div>
             </div>
         </div>
     </template>
@@ -69,7 +75,7 @@
             </div>
             <div class="col-5">
                 <div class="graph-container">
-                    <canvas id="energy-time-bar-graph"></canvas>
+                    <canvas id="energy-time-mean-graph"></canvas>
                 </div>
             </div>
             <div class="col"></div>

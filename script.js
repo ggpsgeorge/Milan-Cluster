@@ -1,3 +1,5 @@
+
+
 //Init map layers
 let mapid = document.getElementById("map");
 let mymap = L.map(mapid).setView([45.4729, 9.2187], 13);
@@ -176,8 +178,8 @@ function onEachFeature(feature, layer, mapLayer = mymap){
 }
 
 function createMarker(mapLayer, center, bar_data, energy_data){
-    let centerString = (Object.values(center)); 
-    centerString = "Lat: " + centerString[0] + " Lon: " + centerString[1];
+    let centerString = (Object.values(center));
+    centerString = "Lat: " + centerString[0].toFixed(5) + "\nLong: " + centerString[1].toFixed(5);
 
     let myIcon = L.icon({
         iconUrl: "white_block_icon.png",
@@ -206,15 +208,18 @@ function createMarker(mapLayer, center, bar_data, energy_data){
 
     let number_anomalies_chart = undefined;
     let energy_time_scatter_chart = undefined;
+    let energy_mean_chart = undefined;
 
     chart_button.addEventListener("click", function(){
         addOverlay()
         number_anomalies_chart = drawNumberOfAnomaliesChart(bar_data);
         energy_time_scatter_chart = drawEnergyTimeScatterChart(energy_data);
+        energy_mean_chart = drawEnergyMeanChart(energy_data, bar_data);
     }, false);
     close_button.addEventListener("click", function(){
         number_anomalies_chart.destroy();
         energy_time_scatter_chart.destroy();
+        energy_mean_chart.destroy();
         removeOverlay();
     }, false);
 
@@ -326,15 +331,13 @@ function drawEnergyTimeScatterChart(energy_data){
 
     let ctx = create_context_charts("energy-time-scatter-graph");
 
-    let labels = []
-    let energy = []
+    let labels = [];
+    let energy = [];
 
     energy_data.forEach(function(e){
-        labels.push(e.time%1*60 + Math.floor(e.time)*3600)
+        labels.push(e.time%1*60 + Math.floor(e.time)*3600);
         energy.push(e.energy);
-    })
-
-    console.log(labels, energy, energy_data)
+    });
 
     let scatter_chart = new Chart(ctx, {
         type: 'scatter',
@@ -381,12 +384,63 @@ function drawEnergyTimeScatterChart(energy_data){
                 }
             }
         }
-    })
+    });
 
-    return scatter_chart
-
+    return scatter_chart;
 }
 
-function drawEnergyTimeMeanChart(energy_data){
-    console.log(energy_data)
+function drawEnergyMeanChart(energy_data, process_data){
+
+    console.log(energy_data, process_data);
+    let ctx = create_context_charts("energy-time-mean-graph");
+
+    let mean = {
+        "Dawn": 0,
+        "Morning": 0,
+        "Afternoon": 0,
+        "Night": 0
+    };
+    energy_data.forEach(function(elem){
+        let moment = give_moment_of_time(elem['time'])
+        mean[moment] += elem.energy;
+    });
+    
+    Object.keys(process_data).forEach(function(elem){
+        mean[elem] = mean[elem]/process_data[elem];
+        if(isNaN(mean[elem])){mean[elem] = 0};
+    })
+
+    let mean_chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Dawn', 'Morning', 'Afternoon', 'Night'],
+            datasets: [{
+                label: 'Energy Mean(FSI)',
+                data: Object.values(mean),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(164, 164, 164, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(164, 164, 164, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    min: -40
+                }
+            }
+        }
+    });
+
+    return mean_chart;
 }
