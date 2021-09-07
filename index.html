@@ -35,17 +35,13 @@
 
     <template id="popup_template">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <h3 id="latlong"></h3>
+            <div class="card" style="width: 18rem;">
+                <img src="..." class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 id="square-id" class="card-title">SQUARE_ID</h5>
+                    <p id="latlong" class="card-text"></p>
+                    <button id="chart-button" type="button" class="btn btn-primary btn-block">Charts</button>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col"></div>
-                <div class="col-5">
-                    <button id="chart-button"type="button" class="btn btn-primary btn-block">Charts</button>
-                </div>
-                <div class="col"></div>
             </div>
         </div>
     </template>
@@ -75,7 +71,7 @@
             </div>
             <div class="col-5">
                 <div class="graph-container">
-                    <canvas id="energy-time-mean-graph"></canvas>
+                    <canvas id="energy-mean-graph"></canvas>
                 </div>
             </div>
             <div class="col"></div>
@@ -141,7 +137,13 @@
     </div>                    
 
     <div class="container">
-        <div id="gradient" class="position-absolute"></div>
+        <div class="row">
+            <div class="col">
+                <div id="gradient" class="position-absolute">
+                    <h6>0% 50% 100%</h6>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>

@@ -1,9 +1,8 @@
-
-
 //Init map layers
 let mapid = document.getElementById("map");
 let mymap = L.map(mapid).setView([45.4729, 9.2187], 13);
 let geojsonLayers = [];
+let popUpInformation = [];
 //Marker var
 let mark = undefined;
 
@@ -160,13 +159,13 @@ function onEachFeature(feature, layer, mapLayer = mymap){
             activityObjs.push({time: array[0], energy: array[1]});
         });
         
-        // console.log(activityObjs);
-
         let polygonBound = L.latLngBounds(layer._latlngs[0][0], layer._latlngs[0][2]);
 
         let center = polygonBound.getCenter();
 
-        let bar_data = process_data(activityObjs)
+        let bar_data = process_data(activityObjs);
+
+        popUpInformation
 
         if(mark == undefined){
             createMarker(mapLayer, center, bar_data, activityObjs);
@@ -178,6 +177,7 @@ function onEachFeature(feature, layer, mapLayer = mymap){
 }
 
 function createMarker(mapLayer, center, bar_data, energy_data){
+    
     let centerString = (Object.values(center));
     centerString = "Lat: " + centerString[0].toFixed(5) + "\nLong: " + centerString[1].toFixed(5);
 
@@ -216,6 +216,7 @@ function createMarker(mapLayer, center, bar_data, energy_data){
         energy_time_scatter_chart = drawEnergyTimeScatterChart(energy_data);
         energy_mean_chart = drawEnergyMeanChart(energy_data, bar_data);
     }, false);
+    
     close_button.addEventListener("click", function(){
         number_anomalies_chart.destroy();
         energy_time_scatter_chart.destroy();
@@ -313,7 +314,7 @@ function drawNumberOfAnomaliesChart(bar_data){
                     'rgba(164, 164, 164, 1)'
                 ],
                 borderWidth: 1
-            }]
+            }],
         },
         options: {
             scales: {
@@ -348,7 +349,7 @@ function drawEnergyTimeScatterChart(energy_data){
                 data: energy,
                 fill: false,
                 borderColor: "#8e5ea2"
-            }]
+            }],
         },
         options: {
             scales: {
@@ -391,8 +392,7 @@ function drawEnergyTimeScatterChart(energy_data){
 
 function drawEnergyMeanChart(energy_data, process_data){
 
-    console.log(energy_data, process_data);
-    let ctx = create_context_charts("energy-time-mean-graph");
+    let ctx = create_context_charts("energy-mean-graph");
 
     let mean = {
         "Dawn": 0,
@@ -430,13 +430,14 @@ function drawEnergyMeanChart(energy_data, process_data){
                     'rgba(164, 164, 164, 1)'
                 ],
                 borderWidth: 1
-            }]
+            }],
         },
         options: {
             scales: {
                 y: {
                     beginAtZero: true,
-                    min: -40
+                    min: -40,
+                    max: 10
                 }
             }
         }
