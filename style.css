@@ -122,8 +122,22 @@ html, body {
 }
 
 #gradient {
-    height: 20px;
-    width: 380px;
+    height: 17px;
+    width: 280px;
     bottom: 30px;
     background: linear-gradient(90deg, rgba(128,128,128,1) 16.6%, rgba(0,159,134,1) 33.3%, rgba(60,84,136,1) 50%, rgba(77,187,213,1) 66.6%, rgba(255,190,125,1) 83.3%, rgba(225,87,89,1) 100%);
+}
+
+#gradient-saturation {
+    height: 17px;
+    width: 310px;
+    bottom: 15px;
+}
+
+#square-id {
+    text-align: center;
+}
+
+#latlong {
+    text-align: center;
 }

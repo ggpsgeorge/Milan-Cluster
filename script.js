@@ -153,6 +153,9 @@ function onEachFeature(feature, layer, mapLayer = mymap){
     layer.on('click', function(){
 
         let activity = layer["defaultOptions"]["activity"];
+        if(activity == undefined){
+            return;
+        }
         let activityObjs = []
 
         activity.forEach(array => {

@@ -39,15 +39,21 @@
                 <img src="..." class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 id="square-id" class="card-title">SQUARE_ID</h5>
-                    <p id="latlong" class="card-text"></p>
-                    <button id="chart-button" type="button" class="btn btn-primary btn-block">Charts</button>
+                    <h6 id="latlong" class="card-text"></h6>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col text-center">
+                                <button id="chart-button" type="button" class="btn btn-primary btn-block">Charts</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </template>
     
     <div id="overlay" class="container-fluid">
-        <div class="row p-1">
+        <div class="row h6-1">
             <div class="col"></div>
             <div class="col"></div>
             <div class="col-5">
@@ -62,7 +68,7 @@
                 </div>
             </div>
         </div>
-        <div class="row p-1">
+        <div class="row h6-1">
             <div class="col"></div>
             <div class="col-5">
                 <div class="graph-container">
@@ -89,7 +95,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <div class="row p-1">
+                        <div class="row h6-1">
                             <div class="col">
                                 <div class="download">
                                     <a id="download-geojson-link" href="dados\\geojsons\\" download="" target="_blank" >
@@ -105,7 +111,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row p-1">
+                        <div class="row h6-1">
                             <div class="col">
                                 <div class="download">
                                     <a id="download-csv-link" href="dados\\days\\" download="" target="_blank">
@@ -121,7 +127,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row p-1">
+                        <div class="row h6-1">
                             <div class="col">
                                 <div class="download">
                                     <a id="download-milano-csv-link" href="dados\\milan_all_data_sorted.csv" download="" target="_blank">
@@ -135,12 +141,25 @@
             </div>
         </div>
     </div>                    
-
+    
     <div class="container">
         <div class="row">
             <div class="col">
-                <div id="gradient" class="position-absolute">
-                    <h6>0% 50% 100%</h6>
+                <div id="gradient" class="position-absolute"></div>
+            </div>
+        </div>
+        <div id="gradient-saturation" class="position-absolute">
+            <div class="row">
+                <div class="col">
+                    <h4>0%</h4>
+                </div>
+                <div class="col"></div>
+                <div class="col">
+                    <h4>50%</h4>
+                </div>
+                <div class="col"></div>
+                <div class="col">
+                    <h4>100%</h4>
                 </div>
             </div>
         </div>
