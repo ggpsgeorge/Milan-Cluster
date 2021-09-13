@@ -154,7 +154,7 @@ function onEachFeature(feature, layer, mapLayer = mymap){
 
         let activity = layer["defaultOptions"]["activity"];
         if(activity == undefined){
-            return;
+            activity = [];
         }
         let activityObjs = []
 
@@ -167,8 +167,6 @@ function onEachFeature(feature, layer, mapLayer = mymap){
         let center = polygonBound.getCenter();
 
         let bar_data = process_data(activityObjs);
-
-        popUpInformation
 
         if(mark == undefined){
             createMarker(mapLayer, center, bar_data, activityObjs);
@@ -213,6 +211,11 @@ function createMarker(mapLayer, center, bar_data, energy_data){
     let energy_time_scatter_chart = undefined;
     let energy_mean_chart = undefined;
 
+    if(energy_data.length == 0){
+        chart_button.innerText = "No information";
+        chart_button.disabled = true;
+    }
+
     chart_button.addEventListener("click", function(){
         addOverlay()
         number_anomalies_chart = drawNumberOfAnomaliesChart(bar_data);
@@ -228,7 +231,7 @@ function createMarker(mapLayer, center, bar_data, energy_data){
     }, false);
 
     mark.update();
-    
+
 }
 
 function removeMarker(mapLayer, marker) {
@@ -348,7 +351,7 @@ function drawEnergyTimeScatterChart(energy_data){
         data: {
             labels: labels,
             datasets: [{
-                label: "Anomaly Energy(FSI) x Time(Segs)",
+                label: "Anomaly Energy(EFC) x Time(Segs)",
                 data: energy,
                 fill: false,
                 borderColor: "#8e5ea2"
@@ -418,7 +421,7 @@ function drawEnergyMeanChart(energy_data, process_data){
         data: {
             labels: ['Dawn', 'Morning', 'Afternoon', 'Night'],
             datasets: [{
-                label: 'Energy Mean(FSI)',
+                label: 'Energy Mean(EFC)',
                 data: Object.values(mean),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',

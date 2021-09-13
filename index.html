@@ -36,15 +36,17 @@
     <template id="popup_template">
         <div class="container-fluid">
             <div class="card" style="width: 18rem;">
-                <img src="..." class="card-img-top" alt="...">
                 <div class="card-body">
-                    <h5 id="square-id" class="card-title">SQUARE_ID</h5>
+                    <h4 id="square-id" class="card-title">SQUARE_ID</h4>
+                    <div class="row">
+                        <div class="col text-center">
+                            <h5 id="total-sum-anomalies">TOTAL_ANOMALIES</h5>
+                        </div>
+                    </div>
                     <h6 id="latlong" class="card-text"></h6>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col text-center">
-                                <button id="chart-button" type="button" class="btn btn-primary btn-block">Charts</button>
-                            </div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <button id="chart-button" type="button" class="btn btn-primary btn-block">Charts</button>
                         </div>
                     </div>
                 </div>
@@ -53,7 +55,7 @@
     </template>
     
     <div id="overlay" class="container-fluid">
-        <div class="row h6-1">
+        <div class="row p-1">
             <div class="col"></div>
             <div class="col"></div>
             <div class="col-5">
@@ -68,7 +70,7 @@
                 </div>
             </div>
         </div>
-        <div class="row h6-1">
+        <div class="row p-1">
             <div class="col"></div>
             <div class="col-5">
                 <div class="graph-container">
@@ -151,15 +153,15 @@
         <div id="gradient-saturation" class="position-absolute">
             <div class="row">
                 <div class="col">
-                    <h4>0%</h4>
+                    <h6>0%</h6>
                 </div>
                 <div class="col"></div>
                 <div class="col">
-                    <h4>50%</h4>
+                    <h6>50%</h6>
                 </div>
                 <div class="col"></div>
                 <div class="col">
-                    <h4>100%</h4>
+                    <h6>100%</h6>
                 </div>
             </div>
         </div>
