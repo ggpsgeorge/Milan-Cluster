@@ -287,6 +287,26 @@ function give_moment_of_time(time) {
     }
 }
 
+function transform_decimal_time_in_time_format(decimal_time){
+
+    let decimal_rest = decimal_time%1
+    let hours = Math.floor(decimal_time);
+    let mins = decimal_rest*60;
+    decimal_rest = mins%1;
+    mins = Math.floor(mins);
+    let secs = Math.floor(decimal_rest*60);
+
+    if(hours < 10){hours = "0"+hours};
+    if(mins < 10){mins = "0"+mins};
+    if(secs < 10){secs = "0"+secs};
+
+    return {
+            "time": `${hours}:${mins}:${secs}`,
+            "total_secs": hours*3600 + mins*60 + secs    
+        };
+
+}
+
 // Charts
 
 function create_context_charts(element_id){
@@ -339,19 +359,25 @@ function drawEnergyTimeScatterChart(energy_data){
     let ctx = create_context_charts("energy-time-scatter-graph");
 
     let labels = [];
+    let timeString_labels = []
     let energy = [];
 
     energy_data.forEach(function(e){
-        labels.push(e.time%1*60 + Math.floor(e.time)*3600);
+        let res = transform_decimal_time_in_time_format(e.time);
+        timeString_labels.push(res);
+        labels.push(res['total_secs']);
         energy.push(e.energy);
     });
+
+    console.log(timeString_labels);
+    console.log(energy, labels);
 
     let scatter_chart = new Chart(ctx, {
         type: 'scatter',
         data: {
             labels: labels,
             datasets: [{
-                label: "Anomaly Energy(EFC) x Time(Segs)",
+                label: "Anomaly Energy(EFC) x Time(Day in secs)",
                 data: energy,
                 fill: false,
                 borderColor: "#8e5ea2"
