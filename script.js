@@ -153,6 +153,9 @@ function onEachFeature(feature, layer, mapLayer = mymap){
     layer.on('click', function(){
 
         let activity = layer["defaultOptions"]["activity"];
+
+        console.log(layer['options']);
+
         if(activity == undefined){
             activity = [];
         }
@@ -168,16 +171,18 @@ function onEachFeature(feature, layer, mapLayer = mymap){
 
         let bar_data = process_data(activityObjs);
 
+        let id = layer['options']['id'];
+
         if(mark == undefined){
-            createMarker(mapLayer, center, bar_data, activityObjs);
+            createMarker(mapLayer, center, bar_data, activityObjs, id);
         }else{
             removeMarker(mapLayer, mark);
-            createMarker(mapLayer, center, bar_data, activityObjs);
+            createMarker(mapLayer, center, bar_data, activityObjs, id);
         }  
     });
 }
 
-function createMarker(mapLayer, center, bar_data, energy_data){
+function createMarker(mapLayer, center, bar_data, energy_data, id){
     
     let centerString = (Object.values(center));
     centerString = "Lat: " + centerString[0].toFixed(5) + "\nLong: " + centerString[1].toFixed(5);
@@ -204,8 +209,12 @@ function createMarker(mapLayer, center, bar_data, energy_data){
     let chart_button = document.getElementById("chart-button");
     let close_button = document.getElementById("close-button");
     let latlong = document.getElementById("latlong");
+    let square_id = document.getElementById("square-id");
+    let total_sum_anomalies = document.getElementById("total-sum-anomalies");
 
-    latlong.innerText = centerString;
+    square_id.innerHTML = `ID: ${id}`;
+    total_sum_anomalies.innerHTML = count_total_number_of_anomalies(bar_data) + " Anomalies";
+    latlong.innerHTML = centerString;
 
     let number_anomalies_chart = undefined;
     let energy_time_scatter_chart = undefined;
@@ -296,14 +305,31 @@ function transform_decimal_time_in_time_format(decimal_time){
     mins = Math.floor(mins);
     let secs = Math.floor(decimal_rest*60);
 
+    let total_secs = hours*3600 + mins*60 + secs
+
     if(hours < 10){hours = "0"+hours};
     if(mins < 10){mins = "0"+mins};
     if(secs < 10){secs = "0"+secs};
-
+    
     return {
             "time": `${hours}:${mins}:${secs}`,
-            "total_secs": hours*3600 + mins*60 + secs    
+            "total_secs": total_secs    
         };
+
+}
+
+function count_total_number_of_anomalies(bar_data){
+
+    let array = Object.values(bar_data);
+    let sum = 0;
+
+    console.log(array);
+
+    array.forEach(function(e){
+        sum += e;
+    })
+
+    return sum
 
 }
 
@@ -368,9 +394,6 @@ function drawEnergyTimeScatterChart(energy_data){
         labels.push(res['total_secs']);
         energy.push(e.energy);
     });
-
-    console.log(timeString_labels);
-    console.log(energy, labels);
 
     let scatter_chart = new Chart(ctx, {
         type: 'scatter',
