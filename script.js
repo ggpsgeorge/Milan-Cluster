@@ -154,8 +154,6 @@ function onEachFeature(feature, layer, mapLayer = mymap){
 
         let activity = layer["defaultOptions"]["activity"];
 
-        console.log(layer['options']);
-
         if(activity == undefined){
             activity = [];
         }
@@ -233,7 +231,7 @@ function createMarker(mapLayer, center, bar_data, energy_data, id){
     }, false);
     
     close_button.addEventListener("click", function(){
-        if(number_anomalies_chart != undefined){
+        if(number_anomalies_chart != undefined && energy_time_scatter_chart != undefined && energy_mean_chart != undefined){
             number_anomalies_chart.destroy();
             energy_time_scatter_chart.destroy();
             energy_mean_chart.destroy();
@@ -325,8 +323,6 @@ function count_total_number_of_anomalies(bar_data){
     let array = Object.values(bar_data);
     let sum = 0;
 
-    console.log(array);
-
     array.forEach(function(e){
         sum += e;
     })
@@ -336,6 +332,7 @@ function count_total_number_of_anomalies(bar_data){
 }
 
 function calculate_anomalies_mean(energy_data, process_data){
+
     let mean = {
         "Dawn": 0,
         "Morning": 0,
@@ -354,6 +351,38 @@ function calculate_anomalies_mean(energy_data, process_data){
     })
     
     return mean;
+}
+
+function calculate_anomalies_standard_deviation_by_time_of_day(energy_data){
+    
+    console.log(energy_data);
+
+    let deviation = {
+        "Dawn": 0,
+        "Morning": 0,
+        "Afternoon": 0,
+        "Night": 0
+    }
+
+    let init_moment = "Dawn";
+    let sample = [];
+
+    energy_data.forEach(function(e){
+        let moment = give_moment_of_time(e['time']);
+
+        if(init_moment == moment){
+            sample.push(e.energy);
+        }else{
+            console.log(sample);
+            deviation[init_moment] = math.std(sample);
+            sample = []
+            init_moment = moment;
+        };
+    });
+
+    deviation[init_moment] = math.std(sample);
+
+    return deviation;
 }
 
 // Charts
@@ -490,6 +519,9 @@ function drawEnergyMeanChart(energy_data, process_data){
     let ctx = create_context_charts("energy-mean-graph");
 
     let mean = calculate_anomalies_mean(energy_data, process_data);
+
+    let std = calculate_anomalies_standard_deviation_by_time_of_day(energy_data);
+    console.log(std)
 
     let mean_chart = new Chart(ctx, {
         type: 'bar',
