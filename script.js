@@ -233,9 +233,11 @@ function createMarker(mapLayer, center, bar_data, energy_data, id){
     }, false);
     
     close_button.addEventListener("click", function(){
-        number_anomalies_chart.destroy();
-        energy_time_scatter_chart.destroy();
-        energy_mean_chart.destroy();
+        if(number_anomalies_chart != undefined){
+            number_anomalies_chart.destroy();
+            energy_time_scatter_chart.destroy();
+            energy_mean_chart.destroy();
+        }
         removeOverlay();
     }, false);
 
@@ -333,6 +335,27 @@ function count_total_number_of_anomalies(bar_data){
 
 }
 
+function calculate_anomalies_mean(energy_data, process_data){
+    let mean = {
+        "Dawn": 0,
+        "Morning": 0,
+        "Afternoon": 0,
+        "Night": 0
+    };
+
+    energy_data.forEach(function(elem){
+        let moment = give_moment_of_time(elem['time'])
+        mean[moment] += elem.energy;
+    });
+    
+    Object.keys(process_data).forEach(function(elem){
+        mean[elem] = mean[elem]/process_data[elem];
+        if(isNaN(mean[elem])){mean[elem] = 0};
+    })
+    
+    return mean;
+}
+
 // Charts
 
 function create_context_charts(element_id){
@@ -351,7 +374,7 @@ function drawNumberOfAnomaliesChart(bar_data){
         data: {
             labels: ['Dawn', 'Morning', 'Afternoon', 'Night'],
             datasets: [{
-                label: 'Number of Anomalies',
+                label: '',
                 data: data_number_of_anomalies,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -369,6 +392,15 @@ function drawNumberOfAnomaliesChart(bar_data){
             }],
         },
         options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Number of anomalies"
+                },
+                legend:{
+                    display: false,
+                },
+            },
             scales: {
                 y: {
                     beginAtZero: true,
@@ -400,10 +432,11 @@ function drawEnergyTimeScatterChart(energy_data){
         data: {
             labels: labels,
             datasets: [{
-                label: "Anomaly Energy(EFC) x Time(Day in secs)",
+                label: "",
                 data: energy,
                 fill: false,
-                borderColor: "#8e5ea2"
+                borderColor: "#2196f3",
+                backgroundColor: "#2196f3"
             }],
         },
         options: {
@@ -420,6 +453,13 @@ function drawEnergyTimeScatterChart(energy_data){
                 }
             },
             plugins: {
+                title: {
+                    display: true,
+                    text: "Anomaly Energy(EFC) x Time(Day in secs)"
+                },
+                legend:{
+                    display: false,
+                },
                 zoom: {
                     zoom: {
                         wheel: {
@@ -449,21 +489,7 @@ function drawEnergyMeanChart(energy_data, process_data){
 
     let ctx = create_context_charts("energy-mean-graph");
 
-    let mean = {
-        "Dawn": 0,
-        "Morning": 0,
-        "Afternoon": 0,
-        "Night": 0
-    };
-    energy_data.forEach(function(elem){
-        let moment = give_moment_of_time(elem['time'])
-        mean[moment] += elem.energy;
-    });
-    
-    Object.keys(process_data).forEach(function(elem){
-        mean[elem] = mean[elem]/process_data[elem];
-        if(isNaN(mean[elem])){mean[elem] = 0};
-    })
+    let mean = calculate_anomalies_mean(energy_data, process_data);
 
     let mean_chart = new Chart(ctx, {
         type: 'bar',
@@ -484,17 +510,26 @@ function drawEnergyMeanChart(energy_data, process_data){
                     'rgba(255, 206, 86, 1)',
                     'rgba(164, 164, 164, 1)'
                 ],
-                borderWidth: 1
+                borderWidth: 1,
             }],
         },
         options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Anomaly Energy(EFC) x Time(Day in secs)"
+                },
+                legend:{
+                    display: false,
+                },
+            },
             scales: {
                 y: {
                     beginAtZero: true,
                     min: -40,
                     max: 10
                 }
-            }
+            },
         }
     });
 
