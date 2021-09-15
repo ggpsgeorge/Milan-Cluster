@@ -231,11 +231,9 @@ function createMarker(mapLayer, center, bar_data, energy_data, id){
     }, false);
     
     close_button.addEventListener("click", function(){
-        if(number_anomalies_chart != undefined && energy_time_scatter_chart != undefined && energy_mean_chart != undefined){
-            number_anomalies_chart.destroy();
-            energy_time_scatter_chart.destroy();
-            energy_mean_chart.destroy();
-        }
+        number_anomalies_chart.destroy();
+        energy_time_scatter_chart.destroy();
+        energy_mean_chart.destroy();
         removeOverlay();
     }, false);
 
@@ -354,43 +352,40 @@ function calculate_anomalies_mean(energy_data, process_data){
 }
 
 function calculate_anomalies_standard_deviation_by_time_of_day(energy_data){
-    
-    console.log(energy_data);
+
+    let sample = {
+        "Dawn": [],
+        "Morning": [],
+        "Afternoon": [],
+        "Night": []
+    };
 
     let deviation = {
         "Dawn": 0,
         "Morning": 0,
         "Afternoon": 0,
         "Night": 0
-    }
-
-    let init_moment = "Dawn";
-    let sample = [];
+    };
 
     energy_data.forEach(function(e){
-        let moment = give_moment_of_time(e['time']);
-
-        if(init_moment == moment){
-            sample.push(e.energy);
-        }else{
-            console.log(sample);
-            deviation[init_moment] = math.std(sample);
-            sample = []
-            init_moment = moment;
-        };
+        let moment = give_moment_of_time(e.time);
+        sample[moment].push(e.energy);
     });
 
-    deviation[init_moment] = math.std(sample);
-
+    Object.keys(sample).forEach(function(moment){
+        if(sample[moment].length > 0){deviation[moment] = math.std(sample[moment])}
+    });
+    
     return deviation;
-}
+    
+};
 
 // Charts
 
 function create_context_charts(element_id){
     let ctx = document.getElementById(element_id).getContext('2d');
     return ctx
-}
+};
 
 function drawNumberOfAnomaliesChart(bar_data){ 
     
@@ -439,7 +434,7 @@ function drawNumberOfAnomaliesChart(bar_data){
         }
     });
     return anomalies_chart;
-}
+};
 
 function drawEnergyTimeScatterChart(energy_data){
 
@@ -512,7 +507,7 @@ function drawEnergyTimeScatterChart(energy_data){
     });
 
     return scatter_chart;
-}
+};
 
 function drawEnergyMeanChart(energy_data, process_data){
 
@@ -520,8 +515,7 @@ function drawEnergyMeanChart(energy_data, process_data){
 
     let mean = calculate_anomalies_mean(energy_data, process_data);
 
-    let std = calculate_anomalies_standard_deviation_by_time_of_day(energy_data);
-    console.log(std)
+    // let deviation = calculate_anomalies_standard_deviation_by_time_of_day(energy_data);
 
     let mean_chart = new Chart(ctx, {
         type: 'bar',
