@@ -8,6 +8,43 @@ let mark = undefined;
 
 let datepicker = document.getElementById("datepicker");
 
+// para n maior que 29
+let z_value = 1.960;
+
+// para n menor que 30
+let tStudent = [
+    12.70620474,
+    4.30265273,
+    3.182446305,
+    2.776445105,
+    2.570581836,
+    2.446911851,
+    2.364624252,
+    2.306004135,
+    2.262157163,
+    2.228138852,
+    2.20098516,
+    2.17881283,
+    2.160368656,
+    2.144786688,
+    2.131449546,
+    2.119905299,
+    2.109815578,
+    2.10092204,
+    2.093024054,
+    2.085963447,
+    2.079613845,
+    2.073873068,
+    2.06865761,
+    2.063898562,
+    2.059538553,
+    2.055529439,
+    2.051830516,
+    2.048407142,
+    2.045229642,
+    2.042272456,
+]
+
 //Load page
 document.addEventListener("DOMContentLoaded", loadPage, false);
 
@@ -451,6 +488,8 @@ function drawEnergyTimeScatterChart(energy_data){
         energy.push(e.energy);
     });
 
+    console.log(timeString_labels);
+
     let scatter_chart = new Chart(ctx, {
         type: 'scatter',
         data: {
@@ -543,7 +582,7 @@ function drawEnergyMeanChart(energy_data, process_data){
             plugins: {
                 title: {
                     display: true,
-                    text: "Anomaly Energy(EFC) x Time(Day in secs)"
+                    text: "Anomaly Energy(EFC)"
                 },
                 legend:{
                     display: false,
