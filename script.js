@@ -8,11 +8,11 @@ let mark = undefined;
 
 let datepicker = document.getElementById("datepicker");
 
-// para n maior que 29
+// para n maior que 30
 let z_value = 1.960;
 
-// para n menor que 30
-let tStudent = [
+// para n menor ate 30
+let tDistribution = [
     12.70620474,
     4.30265273,
     3.182446305,
@@ -43,7 +43,7 @@ let tStudent = [
     2.048407142,
     2.045229642,
     2.042272456,
-]
+];
 
 //Load page
 document.addEventListener("DOMContentLoaded", loadPage, false);
@@ -410,11 +410,50 @@ function calculate_anomalies_standard_deviation_by_time_of_day(energy_data){
     });
 
     Object.keys(sample).forEach(function(moment){
-        if(sample[moment].length > 0){deviation[moment] = math.std(sample[moment])}
+        if(sample[moment].length > 0){
+            deviation[moment] = math.std(sample[moment])
+        }else{
+            deviation[moment] = 0;
+        }
     });
     
     return deviation;
     
+};
+
+function get_degree_of_freedom(number_of_anomalies){
+    
+    let degree_of_freedom = number_of_anomalies - 1;
+    if(degree_of_freedom < 0){degree_of_freedom = 0} 
+
+    return degree_of_freedom
+};
+
+function get_t_distribution(degree_of_freedom){
+    if(degree_of_freedom > 0 && degree_of_freedom <= 30){
+        return tDistribution[degree_of_freedom - 1];
+    }else if(degree_of_freedom > 30){
+        return z_value;
+    }else{
+        return 0;
+    };
+};
+
+function calculate_tStudent(mean, deviation, process_data){
+
+    let t_student_low = {};
+    let t_student_high = {};
+
+    Object.keys(process_data).forEach(function(key){
+        let degree_of_freedom = get_degree_of_freedom(process_data[key]);
+        let t_distribution = get_t_distribution(degree_of_freedom);
+        let resp = deviation[key]/(Math.sqrt(process_data[key]));
+        resp = resp*t_distribution;
+        if(isNaN(resp)){resp = 0};
+        t_student_low[key] = mean[key] - resp;
+        t_student_high[key] = mean[key] + resp;
+    });
+    return [t_student_low, t_student_high];
 };
 
 // Charts
@@ -435,7 +474,7 @@ function drawNumberOfAnomaliesChart(bar_data){
         data: {
             labels: ['Dawn', 'Morning', 'Afternoon', 'Night'],
             datasets: [{
-                label: '',
+                label: 'Anomalies',
                 data: data_number_of_anomalies,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -488,14 +527,14 @@ function drawEnergyTimeScatterChart(energy_data){
         energy.push(e.energy);
     });
 
-    console.log(timeString_labels);
+    // console.log(timeString_labels);
 
     let scatter_chart = new Chart(ctx, {
         type: 'scatter',
         data: {
             labels: labels,
             datasets: [{
-                label: "",
+                label: '',
                 data: energy,
                 fill: false,
                 borderColor: "#2196f3",
@@ -512,13 +551,20 @@ function drawEnergyTimeScatterChart(energy_data){
                 x: {
                     beginAtZero: true,
                     min: 0,
-                    max: 86400
-                }
+                    max: 86400,
+                    title: {
+                        display: true,
+                        text: 'Day in seconds',
+                        font: {
+                            size: 14,
+                        }
+                    }
+                },
             },
             plugins: {
                 title: {
                     display: true,
-                    text: "Anomaly Energy(EFC) x Time(Day in secs)"
+                    text: "Anomaly Energy(EFC)"
                 },
                 legend:{
                     display: false,
@@ -554,12 +600,14 @@ function drawEnergyMeanChart(energy_data, process_data){
 
     let mean = calculate_anomalies_mean(energy_data, process_data);
 
-    // let deviation = calculate_anomalies_standard_deviation_by_time_of_day(energy_data);
+    let deviation = calculate_anomalies_standard_deviation_by_time_of_day(energy_data);
+    let mean_datasets_low_high = calculate_tStudent(mean, deviation, process_data);
+    console.log(mean_datasets_low_high);
 
     let mean_chart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Dawn', 'Morning', 'Afternoon', 'Night'],
+            labels: Object.keys(process_data),
             datasets: [{
                 label: 'Energy Mean(EFC)',
                 data: Object.values(mean),
@@ -576,7 +624,40 @@ function drawEnergyMeanChart(energy_data, process_data){
                     'rgba(164, 164, 164, 1)'
                 ],
                 borderWidth: 1,
-            }],
+            },{
+                label: '',
+                data: Object.values(mean_datasets_low_high[1]),
+                backgroundColor: [
+                    'rgba(0, 0, 0, 0.2)',
+                    'rgba(0, 0, 0, 0.2)',
+                    'rgba(0, 0, 0, 0.2)',
+                    'rgba(0, 0, 0, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 1)',
+                ],
+                borderWidth: 1,
+            },
+            {
+                label: '',
+                data: Object.values(mean_datasets_low_high[0]),
+                backgroundColor: [
+                    'rgba(0, 0, 0, 0.2)',
+                    'rgba(0, 0, 0, 0.2)',
+                    'rgba(0, 0, 0, 0.2)',
+                    'rgba(0, 0, 0, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 1)',
+                ],
+                borderWidth: 1,}
+            ],
         },
         options: {
             plugins: {
@@ -589,10 +670,14 @@ function drawEnergyMeanChart(energy_data, process_data){
                 },
             },
             scales: {
+                x: {
+                    stacked: true,
+                },
                 y: {
                     beginAtZero: true,
                     min: -40,
-                    max: 10
+                    max: 10,
+                    stacked: true,
                 }
             },
         }
