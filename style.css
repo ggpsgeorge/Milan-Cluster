@@ -136,8 +136,15 @@ html, body {
 
 #square-id {
     text-align: center;
+    background-color: #CED7BE;
 }
 
 #latlong {
+    text-orientation: sideways;
     text-align: center;
+}
+
+#popup_template{
+    width: 100%;
+    height: 100%;
 }

@@ -220,7 +220,7 @@ function onEachFeature(feature, layer, mapLayer = mymap){
 function createMarker(mapLayer, center, bar_data, energy_data, id){
     
     let centerString = (Object.values(center));
-    centerString = "Lat: " + centerString[0].toFixed(5) + "\nLong: " + centerString[1].toFixed(5);
+    centerString = "[" + centerString[0].toFixed(5) + " , " + centerString[1].toFixed(5)+"]";
 
     let myIcon = L.icon({
         iconUrl: "white_block_icon.png",
@@ -235,11 +235,7 @@ function createMarker(mapLayer, center, bar_data, energy_data, id){
     mark.setOpacity(0);
     mark.addTo(mapLayer);
     
-    
-    mark.bindPopup(content, {
-        minWidth: "250",
-        maxWidth: "400",
-    }).openPopup();
+    mark.bindPopup(content).openPopup();
 
     let chart_button = document.getElementById("chart-button");
     let close_button = document.getElementById("close-button");
@@ -266,8 +262,11 @@ function createMarker(mapLayer, center, bar_data, energy_data, id){
         energy_time_scatter_chart = drawEnergyTimeScatterChart(energy_data);
         energy_mean_chart = drawEnergyMeanChart(energy_data, bar_data);
     }, false);
-    
+
     close_button.addEventListener("click", function(){
+        number_anomalies_chart.update();
+        energy_time_scatter_chart.update();
+        energy_mean_chart.update();
         number_anomalies_chart.destroy();
         energy_time_scatter_chart.destroy();
         energy_mean_chart.destroy();
@@ -441,8 +440,9 @@ function get_t_distribution(degree_of_freedom){
 
 function calculate_tStudent(mean, deviation, process_data){
 
-    let t_student_low = {};
-    let t_student_high = {};
+    // let t_student_low = {};
+    // let t_student_high = {};
+    let t_student = {}
 
     Object.keys(process_data).forEach(function(key){
         let degree_of_freedom = get_degree_of_freedom(process_data[key]);
@@ -450,10 +450,13 @@ function calculate_tStudent(mean, deviation, process_data){
         let resp = deviation[key]/(Math.sqrt(process_data[key]));
         resp = resp*t_distribution;
         if(isNaN(resp)){resp = 0};
-        t_student_low[key] = mean[key] - resp;
-        t_student_high[key] = mean[key] + resp;
+        // t_student_low[key] = mean[key] - resp;
+        // t_student_high[key] = mean[key] + resp;
+        
+        t_student[key] = resp;
+
     });
-    return [t_student_low, t_student_high];
+    return t_student;
 };
 
 // Charts
@@ -495,7 +498,7 @@ function drawNumberOfAnomaliesChart(bar_data){
             plugins: {
                 title: {
                     display: true,
-                    text: "Number of anomalies"
+                    text: "Number of anomalies",
                 },
                 legend:{
                     display: false,
@@ -505,8 +508,8 @@ function drawNumberOfAnomaliesChart(bar_data){
                 y: {
                     beginAtZero: true,
                     max: 40,
-                }
-            }
+                },
+            },
         }
     });
     return anomalies_chart;
@@ -526,8 +529,6 @@ function drawEnergyTimeScatterChart(energy_data){
         labels.push(res['total_secs']);
         energy.push(e.energy);
     });
-
-    // console.log(timeString_labels);
 
     let scatter_chart = new Chart(ctx, {
         type: 'scatter',
@@ -601,15 +602,16 @@ function drawEnergyMeanChart(energy_data, process_data){
     let mean = calculate_anomalies_mean(energy_data, process_data);
 
     let deviation = calculate_anomalies_standard_deviation_by_time_of_day(energy_data);
-    let mean_datasets_low_high = calculate_tStudent(mean, deviation, process_data);
-    console.log(mean_datasets_low_high);
+    let mean_error = calculate_tStudent(mean, deviation, process_data);
+
+    console.log(mean_error);
 
     let mean_chart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: Object.keys(process_data),
             datasets: [{
-                label: 'Energy Mean(EFC)',
+                label: 'Energy Mean(EFC):',
                 data: Object.values(mean),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -624,64 +626,27 @@ function drawEnergyMeanChart(energy_data, process_data){
                     'rgba(164, 164, 164, 1)'
                 ],
                 borderWidth: 1,
-            },{
-                label: '',
-                data: Object.values(mean_datasets_low_high[1]),
-                backgroundColor: [
-                    'rgba(0, 0, 0, 0.2)',
-                    'rgba(0, 0, 0, 0.2)',
-                    'rgba(0, 0, 0, 0.2)',
-                    'rgba(0, 0, 0, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 1)',
-                ],
-                borderWidth: 1,
-            },
-            {
-                label: '',
-                data: Object.values(mean_datasets_low_high[0]),
-                backgroundColor: [
-                    'rgba(0, 0, 0, 0.2)',
-                    'rgba(0, 0, 0, 0.2)',
-                    'rgba(0, 0, 0, 0.2)',
-                    'rgba(0, 0, 0, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 1)',
-                ],
-                borderWidth: 1,}
-            ],
+            }],
         },
         options: {
             plugins: {
                 title: {
                     display: true,
-                    text: "Anomaly Energy(EFC)"
+                    text: "Mean - Anomaly Energy(EFC)"
                 },
                 legend:{
                     display: false,
                 },
             },
             scales: {
-                x: {
-                    stacked: true,
-                },
                 y: {
                     beginAtZero: true,
                     min: -40,
                     max: 10,
-                    stacked: true,
-                }
+                },
             },
-        }
+        },
     });
 
     return mean_chart;
-}
+};
