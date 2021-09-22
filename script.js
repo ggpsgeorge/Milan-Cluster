@@ -209,15 +209,15 @@ function onEachFeature(feature, layer, mapLayer = mymap){
         let id = layer['options']['id'];
 
         if(mark == undefined){
-            createMarker(mapLayer, center, bar_data, activityObjs, id);
+            createMarker(mapLayer, center, bar_data, activityObjs, layer, id);
         }else{
             removeMarker(mapLayer, mark);
-            createMarker(mapLayer, center, bar_data, activityObjs, id);
+            createMarker(mapLayer, center, bar_data, activityObjs, layer, id);
         }  
     });
 }
 
-function createMarker(mapLayer, center, bar_data, energy_data, id){
+function createMarker(mapLayer, center, bar_data, energy_data, layer, id){
     
     let centerString = (Object.values(center));
     centerString = "[" + centerString[0].toFixed(5) + " , " + centerString[1].toFixed(5)+"]";
@@ -244,6 +244,7 @@ function createMarker(mapLayer, center, bar_data, energy_data, id){
     let total_sum_anomalies = document.getElementById("total-sum-anomalies");
 
     square_id.innerHTML = `ID: ${id}`;
+    square_id.style.backgroundColor = layer['options']['fillColor'];
     total_sum_anomalies.innerHTML = count_total_number_of_anomalies(bar_data) + " Anomalies";
     latlong.innerHTML = centerString;
 
@@ -453,7 +454,7 @@ function calculate_tStudent(mean, deviation, process_data){
         // t_student_low[key] = mean[key] - resp;
         // t_student_high[key] = mean[key] + resp;
         
-        t_student[key] = resp;
+        t_student[key] = resp.toFixed(3);
 
     });
     return t_student;
@@ -604,14 +605,14 @@ function drawEnergyMeanChart(energy_data, process_data){
     let deviation = calculate_anomalies_standard_deviation_by_time_of_day(energy_data);
     let mean_error = calculate_tStudent(mean, deviation, process_data);
 
-    console.log(mean_error);
+    // console.log(mean_error);
 
     let mean_chart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: Object.keys(process_data),
             datasets: [{
-                label: 'Energy Mean(EFC):',
+                label: 'Energy Mean(EFC) ' + mean_error['Morning'],
                 data: Object.values(mean),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
