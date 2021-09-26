@@ -467,7 +467,57 @@ function create_context_charts(element_id){
     return ctx
 };
 
-function drawNumberOfAnomaliesChart(bar_data){ 
+function drawNumberOfAnomaliesChart(bar_data){
+    data_number_of_anomalies = [bar_data['Dawn'], bar_data['Morning'], bar_data['Afternoon'], bar_data['Night']];
+    
+    let ctx = create_context_charts("number-anomalies-chart");
+
+    let anomalies_chart = new Chart(ctx, {
+        type:'bar',
+        data: {
+            labels: Object.keys(bar_data),
+            datasets: [{
+                label: 'Anomalies',
+                data: Object.values(bar_data),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(164, 164, 164, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(164, 164, 164, 1)'
+                ],
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            title:{
+                display:true,
+                text:'Number of anomalies'
+            },
+            legend:{
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true,
+                        max: 40,
+                        stepSize: 10,
+                    }
+                }],
+            },
+        }
+    });
+    return anomalies_chart;
+};
+
+function drawNumberOfAnomaliesChart_depricated(bar_data){ 
     
     data_number_of_anomalies = [bar_data['Dawn'], bar_data['Morning'], bar_data['Afternoon'], bar_data['Night']];
     
