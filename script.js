@@ -468,7 +468,6 @@ function create_context_charts(element_id){
 };
 
 function drawNumberOfAnomaliesChart(bar_data){
-    data_number_of_anomalies = [bar_data['Dawn'], bar_data['Morning'], bar_data['Afternoon'], bar_data['Night']];
     
     let ctx = create_context_charts("number-anomalies-chart");
 
@@ -496,7 +495,7 @@ function drawNumberOfAnomaliesChart(bar_data){
         },
         options: {
             title:{
-                display:true,
+                display: true,
                 text:'Number of anomalies'
             },
             legend:{
@@ -504,7 +503,6 @@ function drawNumberOfAnomaliesChart(bar_data){
             },
             scales: {
                 yAxes: [{
-                    display: true,
                     ticks: {
                         beginAtZero: true,
                         max: 40,
@@ -517,129 +515,59 @@ function drawNumberOfAnomaliesChart(bar_data){
     return anomalies_chart;
 };
 
-function drawNumberOfAnomaliesChart_depricated(bar_data){ 
-    
-    data_number_of_anomalies = [bar_data['Dawn'], bar_data['Morning'], bar_data['Afternoon'], bar_data['Night']];
-    
-    let ctx = create_context_charts("number-anomalies-chart");
-
-    let anomalies_chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Dawn', 'Morning', 'Afternoon', 'Night'],
-            datasets: [{
-                label: 'Anomalies',
-                data: data_number_of_anomalies,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(164, 164, 164, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(164, 164, 164, 1)'
-                ],
-                borderWidth: 1
-            }],
-        },
-        options: {
-            plugins: {
-                title: {
-                    display: true,
-                    text: "Number of anomalies",
-                },
-                legend:{
-                    display: false,
-                },
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 40,
-                },
-            },
-        }
-    });
-    return anomalies_chart;
-};
-
 function drawEnergyTimeScatterChart(energy_data){
 
     let ctx = create_context_charts("energy-time-scatter-graph");
 
-    let labels = [];
-    let timeString_labels = []
-    let energy = [];
+    let point_format = [];
 
     energy_data.forEach(function(e){
         let res = transform_decimal_time_in_time_format(e.time);
-        timeString_labels.push(res);
-        labels.push(res['total_secs']);
-        energy.push(e.energy);
+        point_format.push({x: res['total_secs'], y: e.energy});
     });
 
     let scatter_chart = new Chart(ctx, {
         type: 'scatter',
         data: {
-            labels: labels,
             datasets: [{
                 label: '',
-                data: energy,
+                data: point_format,
                 fill: false,
                 borderColor: "#2196f3",
                 backgroundColor: "#2196f3"
             }],
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    min: -35,
-                    max: 5
-                },
-                x: {
-                    beginAtZero: true,
-                    min: 0,
-                    max: 86400,
-                    title: {
-                        display: true,
-                        text: 'Day in seconds',
-                        font: {
-                            size: 14,
-                        }
-                    }
-                },
+            title: {
+                display: true,
+                text: "Anomaly Energy(EFC)"
             },
-            plugins: {
-                title: {
-                    display: true,
-                    text: "Anomaly Energy(EFC)"
-                },
-                legend:{
-                    display: false,
-                },
-                zoom: {
-                    zoom: {
-                        wheel: {
-                            enabled: true,
-                        },
-                        pinch: {
-                            enabled: false,
-                        },
-                        mode: 'xy',
-                        drag: {
-                            enabled: false,
-                        }
+            legend:{
+                display: false,
+            },
+            scales: {
+                yAxes:[{
+                    ticks:{
+                        beginAtZero: true,
+                        min: -35,
+                        max: 5,
+                        stepSize: 5,
+                    }   
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Day in seconds',
+                        fontSize: 14,
                     },
-                    limits: {
-                        y: {min: -35, max: 0},
-                        x: {min: 0, max: 86400}
-                    },
-                }
-            }
+                    ticks:{
+                        beginAtZero: true,
+                        min: 0,
+                        max: 86400,
+                        stepSize: 21600,
+                    }
+                }],
+            },
         }
     });
 
@@ -662,7 +590,7 @@ function drawEnergyMeanChart(energy_data, process_data){
         data: {
             labels: Object.keys(process_data),
             datasets: [{
-                label: 'Energy Mean(EFC) ' + mean_error['Morning'],
+                label: 'Energy Mean(EFC) ',
                 data: Object.values(mean),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -680,21 +608,22 @@ function drawEnergyMeanChart(energy_data, process_data){
             }],
         },
         options: {
-            plugins: {
-                title: {
-                    display: true,
-                    text: "Mean - Anomaly Energy(EFC)"
-                },
-                legend:{
-                    display: false,
-                },
+            title: {
+                display: true,
+                text: "Mean - Anomaly Energy(EFC)"
+            },
+            legend:{
+                display: false,
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    min: -40,
-                    max: 10,
-                },
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true,
+                        min: -40,
+                        max: 10,
+                    }
+                }],
             },
         },
     });
