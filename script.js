@@ -568,6 +568,24 @@ function drawEnergyTimeScatterChart(energy_data){
                     }
                 }],
             },
+            plugins: {
+                zoom: {
+                    zoom: {
+                        enabled: true,
+                        drag: false,
+                        mode: 'xy',
+                        rangeMin: {
+                            x: 0,
+                            y: -35
+                        },
+                        rangeMax: {
+                            x: 86400,
+                            y: 5
+                        },
+                        speed: 0.1
+                    }
+                }
+            }
         }
     });
 
