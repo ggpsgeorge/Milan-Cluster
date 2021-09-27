@@ -441,9 +441,9 @@ function get_t_distribution(degree_of_freedom){
 
 function calculate_tStudent(mean, deviation, process_data){
 
-    // let t_student_low = {};
-    // let t_student_high = {};
-    let t_student = {}
+    let t_student_minus = {};
+    let t_student_plus = {};
+    // let t_student = {}
 
     Object.keys(process_data).forEach(function(key){
         let degree_of_freedom = get_degree_of_freedom(process_data[key]);
@@ -451,13 +451,13 @@ function calculate_tStudent(mean, deviation, process_data){
         let resp = deviation[key]/(Math.sqrt(process_data[key]));
         resp = resp*t_distribution;
         if(isNaN(resp)){resp = 0};
-        // t_student_low[key] = mean[key] - resp;
-        // t_student_high[key] = mean[key] + resp;
+        t_student_minus[key] = (mean[key] - resp).toFixed(3);
+        t_student_plus[key] = (mean[key] + resp).toFixed(3);
         
-        t_student[key] = resp.toFixed(3);
+        // t_student[key] = resp.toFixed(3);
 
     });
-    return t_student;
+    return [t_student_minus, t_student_plus];
 };
 
 // Charts
@@ -601,7 +601,12 @@ function drawEnergyMeanChart(energy_data, process_data){
     let deviation = calculate_anomalies_standard_deviation_by_time_of_day(energy_data);
     let mean_error = calculate_tStudent(mean, deviation, process_data);
 
-    // console.log(mean_error);
+    let minus = mean_error[0];
+    let plus = mean_error[1];
+
+    console.log(minus, plus);
+    console.log(Object.keys(mean));
+    console.log(Object.values(mean));
 
     let mean_chart = new Chart(ctx, {
         type: 'bar',
@@ -610,6 +615,12 @@ function drawEnergyMeanChart(energy_data, process_data){
             datasets: [{
                 label: 'Energy Mean(EFC) ',
                 data: Object.values(mean),
+                errorBars: {
+                    'Dawn': {plus: plus['Dawn'], minus: minus['Dawn']},
+                    'Morning': {plus: plus['Morning'], minus: minus['Morning']},
+                    'Afternoon': {plus: plus['Afternoon'], minus: minus['Afternoon']},
+                    'Night': {plus: plus['Night'], minus: minus['Night']}
+                },
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -626,6 +637,12 @@ function drawEnergyMeanChart(energy_data, process_data){
             }],
         },
         options: {
+            plugins:{
+                chartJsPluginErrorBars: {
+                    color: '#666',
+                    absoluteValues: true,
+                },
+            },
             title: {
                 display: true,
                 text: "Mean - Anomaly Energy(EFC)"
@@ -640,6 +657,7 @@ function drawEnergyMeanChart(energy_data, process_data){
                         beginAtZero: true,
                         min: -40,
                         max: 10,
+                        stepSize: 10,
                     }
                 }],
             },
