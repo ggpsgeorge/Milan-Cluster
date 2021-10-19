@@ -83,6 +83,15 @@ function loadMap(mapLayer){
         maxZoom: 18,
         accessToken: 'pk.eyJ1IjoiZ2dwc2dlb3JnZSIsImEiOiJja2xoNjRoNnk1YnRnMnJwbGhjdjdkMW9lIn0.kn_ZuIZt6PkfprwNnUPRwg'
     }).addTo(mapLayer);
+   
+    // Openstreetmap, the style is not good. That's why i used mapbox
+    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    //     tileSize: 512,
+    //     zoomOffset: -1,
+    //     minZoom: 11,
+    //     maxZoom: 18,
+    // }).addTo(mapLayer);
 
     // limit the map bounds
     let corner1 = L.latLng(45.35880131440966, 9.0114910478323);
@@ -604,9 +613,9 @@ function drawEnergyMeanChart(energy_data, process_data){
     let minus = mean_error[0];
     let plus = mean_error[1];
 
-    console.log(minus, plus);
-    console.log(Object.keys(mean));
-    console.log(Object.values(mean));
+    // console.log(minus, plus);
+    // console.log(Object.keys(mean));
+    // console.log(Object.values(mean));
 
     let mean_chart = new Chart(ctx, {
         type: 'bar',
