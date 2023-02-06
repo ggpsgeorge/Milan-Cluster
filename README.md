@@ -5,6 +5,9 @@ The data has only 2 days to minimize use, however there is the entire data with 
  
 Clone the repo, and use npm install. Also, use a HTTP server on your IDE.
 
+IMPORTANT
+The images below use the mapbox sytle of mapping, to use you must have a access token. If you don't want do use MapBox, just comment the line and uncomment the OpenStreet map function below in the script.js file.
+
 Below some images to show the tool working.
 
 ## Initial Page
