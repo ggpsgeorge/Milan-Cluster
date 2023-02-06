@@ -166,10 +166,9 @@ def give_moment_of_time(time):
         return "Night"
     
 
-# merge_all_days_to_geojson("C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\days")
-# split_csv_by_day("dados\\milan-sorted.csv")
+split_csv_by_day("dados\milan-sorted.csv")
+merge_all_days_to_geojson("dados\days")
 # transform_csv_to_dict_records("dados\\temp.csv")
-count_the_max_number_of_anomalies_from_csv("C:\\Users\\ggpsg\\Dropbox\\TCC\\2_2020\\Milan-Cluster\\Milan-Cluster\\dados\\days")    
-# merge_csv_to_geojson("dados\\milano-grid.geojson", "dados\\days\\2013-11-03.csv", "dados\\geojsons\\2013-11-03.geojson")
-# # split_csv_by_week("dados\\milan-sorted.csv")
+# count_the_max_number_of_anomalies_from_csv("\dados\days")    
+
 

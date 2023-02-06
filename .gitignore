@@ -1,2 +1,5 @@
 node_modules/*
 dados/*
+!dados/2013-11-20.geojson
+!dados/2013-11-12.geojson
+!dados/milan_all_data_sorted.csv
