@@ -85,7 +85,7 @@ function loadMap(mapLayer){
     }).addTo(mapLayer);
    
     // Openstreetmap, the style is not good. That's why i used mapbox
-    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // L.tileLayer('https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png', {
     //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     //     tileSize: 512,
     //     zoomOffset: -1,
